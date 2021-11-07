@@ -1,8 +1,8 @@
-# GUIDED Backend
+# Beat Bridge Backend
 
 ## Description
 
-Rainbow Project
+Beat Bridge Project
 
 
 ## Links
