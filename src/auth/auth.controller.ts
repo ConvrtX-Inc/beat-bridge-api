@@ -75,28 +75,4 @@ export class AuthController {
       resetPasswordDto.password,
     );
   }
-
-  @ApiBearerAuth()
-  @Get('me')
-  @UseGuards(AuthGuard('jwt'))
-  @HttpCode(HttpStatus.OK)
-  public async me(@Request() request) {
-    return this.service.me(request.user);
-  }
-
-  @ApiBearerAuth()
-  @Patch('me')
-  @UseGuards(AuthGuard('jwt'))
-  @HttpCode(HttpStatus.OK)
-  public async update(@Request() request, @Body() userDto: AuthUpdateDto) {
-    return this.service.update(request.user, userDto);
-  }
-
-  @ApiBearerAuth()
-  @Delete('me')
-  @UseGuards(AuthGuard('jwt'))
-  @HttpCode(HttpStatus.OK)
-  public async delete(@Request() request) {
-    return this.service.softDelete(request.user);
-  }
 }

@@ -45,6 +45,10 @@ export class MailService {
   async forgotPassword(mailData: MailData<{ hash: string }>) {
     await this.mailerService.sendMail({
       to: mailData.to,
+      from: {
+        name: this.configService.get('app.name'),
+        address: 'bernie@convrtx.com',
+      },
       subject: await this.i18n.t('common.resetPassword'),
       text: `${this.configService.get('app.frontendDomain')}/password-change/${
         mailData.data.hash
