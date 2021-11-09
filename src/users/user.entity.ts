@@ -1,12 +1,10 @@
 import {
   Column,
   AfterLoad,
-  CreateDateColumn,
   DeleteDateColumn,
   Entity,
   Index,
   PrimaryGeneratedColumn,
-  UpdateDateColumn,
   BeforeInsert,
   BeforeUpdate,
 } from 'typeorm';
@@ -24,25 +22,18 @@ import * as bcrypt from 'bcryptjs';
 import { EntityHelper } from 'src/utils/entity-helper';
 import { CrudValidationGroups } from '@nestjsx/crud';
 import { AuthProvidersEnum } from 'src/auth/auth-providers.enum';
+import { IsExist } from 'src/utils/validators/is-exists.validator';
 
 @Entity()
 export class User extends EntityHelper {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @Exclude({ toPlainOnly: true })
-  @Column({ nullable: true })
-  @Index()
-  hash: string | null;
-
-  @Index()
-  @Column({ nullable: true })
-  socialId: string | null;
-
+  @ApiProperty({ example: 'johndoe' })
   @Column({ nullable: false, type: 'varchar', length: 50 })
   username: string;
 
-  @ApiProperty({ example: 'test1@example.com' })
+  @ApiProperty({ example: 'johndoe@example.com' })
   @Transform((value: string | null) => value?.toLowerCase().trim())
   @IsOptional({ groups: [CrudValidationGroups.UPDATE] })
   @IsNotEmpty({ groups: [CrudValidationGroups.CREATE] })
@@ -57,7 +48,7 @@ export class User extends EntityHelper {
   @Column({ default: AuthProvidersEnum.email })
   provider: string;
 
-  @ApiProperty({ example: 'John' })
+  @ApiProperty({ example: '3235534022' })
   @IsOptional({ groups: [CrudValidationGroups.UPDATE] })
   @IsNotEmpty({ groups: [CrudValidationGroups.CREATE] })
   @Column({ nullable: true })
@@ -87,15 +78,32 @@ export class User extends EntityHelper {
     }
   }
 
-  @Column({ nullable: true, type: 'uuid' })
+  @IsOptional()
+  @ApiProperty({ example: 'cbcfa8b8-3a25-4adb-a9c6-e325f0d0f3ae' })
+  @Column({ type: 'uuid', nullable: true })
+  @Validate(IsExist, ['Avatar', 'id'], {
+    message: 'statusNotExists',
+    groups: [CrudValidationGroups.UPDATE],
+  })
   avatar_id?: string;
 
-  @CreateDateColumn()
-  created_date: Date;
+  @Exclude({ toPlainOnly: true })
+  @Column({ nullable: true })
+  @Index()
+  hash: string | null;
 
-  @UpdateDateColumn()
-  updated_date: Date;
+  @Index()
+  @Column({ nullable: true })
+  socialId: string | null;
+
+  @IsOptional()
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  created_date?: string;
+
+  @IsOptional()
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+  updated_date?: string;
 
   @DeleteDateColumn()
-  deleted_date: Date;
+  deleted_date?: Date;
 }
