@@ -21,8 +21,8 @@ async function bootstrap() {
   app.useGlobalPipes(new ValidationPipe(validationOptions));
 
   const options = new DocumentBuilder()
-    .setTitle('API')
-    .setDescription('API docs')
+    .setTitle('BEAT BRIDGE API')
+    .setDescription('BEAT BRIDGE API docs')
     .setVersion('1.0')
     .addBearerAuth()
     .build();

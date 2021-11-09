@@ -30,6 +30,7 @@ import { HomeModule } from './home/home.module';
 import { UserQueueModule } from './user-queue/userQueue.module';
 import { QueueMemberModule } from './queue-member/queueMember.module';
 import { UserConnectionModule } from './user-connection/userConnection.module';
+import { AvatarModule } from './avatar/avatar.module';
 
 @Module({
   imports: [
@@ -83,6 +84,7 @@ import { UserConnectionModule } from './user-connection/userConnection.module';
     UserQueueModule,
     QueueMemberModule,
     UserConnectionModule,
+    AvatarModule,
   ],
 })
 export class AppModule {}
