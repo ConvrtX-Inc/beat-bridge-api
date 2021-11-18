@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { UserQueueController } from './userQueue.controller';
-import { UserQueueService } from './userQueue.service';
+import { UserQueueController } from './user-queue.controller';
+import { UserQueueService } from './user-queue.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserQueue } from './userQueue.entity';
+import { UserQueue } from './user-queue.entity';
 
 @Module({
   controllers: [UserQueueController],

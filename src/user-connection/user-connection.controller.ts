@@ -8,11 +8,11 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { UserConnectionService } from './userConnection.service';
+import { UserConnectionService } from './user-connection.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Crud, CrudController, Override } from '@nestjsx/crud';
-import { UserConnection } from './userConnection.entity';
+import { UserConnection } from './user-connection.entity';
 import { SendFriendRequestDto } from './dtos/send-friend-request.dto';
 
 @ApiBearerAuth()

@@ -1,25 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
-import { UserQueue } from './userQueue.entity';
+import { QueuePlaylist } from './queue-playlist.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptions } from '../utils/types/find-options.type';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { DeepPartial } from '../utils/types/deep-partial.type';
 
 @Injectable()
-export class UserQueueService extends TypeOrmCrudService<UserQueue> {
+export class QueuePlaylistService extends TypeOrmCrudService<QueuePlaylist> {
   constructor(
-    @InjectRepository(UserQueue)
-    private destinationsRepository: Repository<UserQueue>,
+    @InjectRepository(QueuePlaylist)
+    private queuePlaylistsRepository: Repository<QueuePlaylist>,
   ) {
-    super(destinationsRepository);
+    super(queuePlaylistsRepository);
   }
 
   /*
    * find one entity
    */
-  async findOneEntity(options: FindOptions<UserQueue>) {
-    return this.destinationsRepository.findOne({
+  async findOneEntity(options: FindOptions<QueuePlaylist>) {
+    return this.queuePlaylistsRepository.findOne({
       where: options.where,
     });
   }
@@ -27,8 +27,8 @@ export class UserQueueService extends TypeOrmCrudService<UserQueue> {
   /*
    * find many entity
    */
-  async findManyEntities(options: FindOptions<UserQueue>) {
-    return this.destinationsRepository.find({
+  async findManyEntities(options: FindOptions<QueuePlaylist>) {
+    return this.queuePlaylistsRepository.find({
       where: options.where,
     });
   }
@@ -43,9 +43,9 @@ export class UserQueueService extends TypeOrmCrudService<UserQueue> {
   /*
    * save entity
    */
-  async saveEntity(data: DeepPartial<UserQueue>[]) {
-    return this.destinationsRepository.save(
-      this.destinationsRepository.create(data),
+  async saveEntity(data: DeepPartial<QueuePlaylist>[]) {
+    return this.queuePlaylistsRepository.save(
+      this.queuePlaylistsRepository.create(data),
     );
   }
 
@@ -53,13 +53,13 @@ export class UserQueueService extends TypeOrmCrudService<UserQueue> {
    * Softdelete single entity
    */
   async softDelete(id: number): Promise<void> {
-    await this.destinationsRepository.softDelete(id);
+    await this.queuePlaylistsRepository.softDelete(id);
   }
 
   /*
    * Hardelete single entity
    */
   async delete(id: number): Promise<void> {
-    await this.destinationsRepository.delete(id);
+    await this.queuePlaylistsRepository.delete(id);
   }
 }

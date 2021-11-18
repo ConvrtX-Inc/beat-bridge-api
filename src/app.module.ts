@@ -27,9 +27,10 @@ import { MailConfigService } from './mail/mail-config.service';
 import { ForgotModule } from './forgot/forgot.module';
 import { MailModule } from './mail/mail.module';
 import { HomeModule } from './home/home.module';
-import { UserQueueModule } from './user-queue/userQueue.module';
-import { QueueMemberModule } from './queue-member/queueMember.module';
-import { UserConnectionModule } from './user-connection/userConnection.module';
+import { UserQueueModule } from './user-queue/user-queue.module';
+import { QueueMemberModule } from './queue-member/queue-member.module';
+import { UserConnectionModule } from './user-connection/user-connection.module';
+import { QueuePlaylistModule } from './queue-playlist/queue-playlist.module';
 
 @Module({
   imports: [
@@ -83,6 +84,7 @@ import { UserConnectionModule } from './user-connection/userConnection.module';
     UserQueueModule,
     QueueMemberModule,
     UserConnectionModule,
+    QueuePlaylistModule,
   ],
 })
 export class AppModule {}

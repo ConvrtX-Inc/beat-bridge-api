@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
-import { UserConnectionController } from './userConnection.controller';
-import { UserConnectionService } from './userConnection.service';
+import { UserConnectionController } from './user-connection.controller';
+import { UserConnectionService } from './user-connection.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserConnection } from './userConnection.entity';
+import { UserConnection } from './user-connection.entity';
 import { UsersModule } from 'src/users/users.module';
 
 @Module({

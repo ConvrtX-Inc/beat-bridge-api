@@ -1,9 +1,9 @@
 import { Controller, Request, UseGuards } from '@nestjs/common';
-import { UserQueueService } from './userQueue.service';
+import { UserQueueService } from './user-queue.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Crud, CrudController, Override } from '@nestjsx/crud';
-import { UserQueue } from './userQueue.entity';
+import { UserQueue } from './user-queue.entity';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
