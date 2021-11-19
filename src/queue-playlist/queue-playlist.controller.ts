@@ -1,9 +1,14 @@
-import { Controller, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Request, UseGuards } from '@nestjs/common';
 import { QueuePlaylistService } from './queue-playlist.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { Crud, CrudController } from '@nestjsx/crud';
 import { QueuePlaylist } from './queue-playlist.entity';
+import { SourcePlatformDto } from './dtos/source-platform.dto';
+import { QueueCreatorDto } from './dtos/queue-creator.dto';
+import { QueueNearMeDto } from './dtos/queue-near-me.dto';
+import { QueueCreatedDateDto } from './dtos/queue-created-date.dto';
+import { QueueNameDto } from './dtos/queue-name.dto';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
@@ -36,5 +41,35 @@ export class QueuePlaylistController implements CrudController<QueuePlaylist> {
 
   get base(): CrudController<QueuePlaylist> {
     return this;
+  }
+
+  @ApiOperation({ summary: 'Retrieve data by date range' })
+  @Get('/get-source-platform')
+  public async getSourcePlatform(@Body() dto: SourcePlatformDto) {
+    return await this.service.getSourcePlatform(dto);
+  }
+
+  @ApiOperation({ summary: 'Retrieve data by date range' })
+  @Get('/get-queue-creator')
+  public async getQueueCreator(@Body() dto: QueueCreatorDto) {
+    return await this.service.getQueueCreator(dto);
+  }
+
+  @ApiOperation({ summary: 'Retrieve data by date range' })
+  @Get('/get-queue-near-me')
+  public async getQueueNearMe(@Body() dto: QueueNearMeDto) {
+    return await this.service.getQueueNearMe(dto);
+  }
+
+  @ApiOperation({ summary: 'Retrieve data by date range' })
+  @Get('/get-queue-created-date')
+  public async getQueueCreatedDate(@Body() dto: QueueCreatedDateDto) {
+    return await this.service.getQueueCreatedDate(dto);
+  }
+
+  @ApiOperation({ summary: 'Retrieve data by date range' })
+  @Get('/get-queue-name')
+  public async getQueueName(@Body() dto: QueueNameDto) {
+    return await this.service.getQueueName(dto);
   }
 }
