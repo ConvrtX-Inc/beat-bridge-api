@@ -7,11 +7,15 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import validationOptions from 'src/utils/validation-options';
 
 @ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
 @ApiTags('Users')
 @Crud({
   validation: validationOptions,
   model: {
     type: User,
+  },
+  routes: {
+    exclude: ['replaceOneBase', 'createManyBase'],
   },
   query: {
     maxLimit: 50,
@@ -28,6 +32,13 @@ import validationOptions from 'src/utils/validation-options';
       },
     },
   },
+  params: {
+    id: {
+      type: 'uuid',
+      primary: true,
+      field: 'id',
+    },
+  },
 })
 @Controller({
   path: 'users',
@@ -38,6 +49,11 @@ export class UsersController implements CrudController<User> {
 
   get base(): CrudController<User> {
     return this;
+  }
+
+  @Override('getOneBase')
+  async getOneAndDoStuff(@Request() req) {
+    return this.service.getOneBase(req.params.id);
   }
 
   @Override()

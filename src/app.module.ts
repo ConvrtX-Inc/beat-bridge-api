@@ -31,6 +31,7 @@ import { UserQueueModule } from './user-queue/user-queue.module';
 import { QueueMemberModule } from './queue-member/queue-member.module';
 import { UserConnectionModule } from './user-connection/user-connection.module';
 import { QueuePlaylistModule } from './queue-playlist/queue-playlist.module';
+import { AvatarModule } from './avatar/avatar.module';
 
 @Module({
   imports: [
@@ -84,6 +85,7 @@ import { QueuePlaylistModule } from './queue-playlist/queue-playlist.module';
     UserQueueModule,
     QueueMemberModule,
     UserConnectionModule,
+    AvatarModule,
     QueuePlaylistModule,
   ],
 })

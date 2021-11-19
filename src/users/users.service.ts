@@ -27,6 +27,14 @@ export class UsersService extends TypeOrmCrudService<User> {
     });
   }
 
+  async getOneBase(id: string) {
+    return await this.usersRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+  }
+
   async saveEntity(data: DeepPartial<User>) {
     return this.usersRepository.save(this.usersRepository.create(data));
   }
