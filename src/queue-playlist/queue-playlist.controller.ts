@@ -43,31 +43,31 @@ export class QueuePlaylistController implements CrudController<QueuePlaylist> {
     return this;
   }
 
-  @ApiOperation({ summary: 'Retrieve data by date range' })
+  @ApiOperation({ summary: 'Retrieve data by source platform' })
   @Get('/get-source-platform')
   public async getSourcePlatform(@Body() dto: SourcePlatformDto) {
     return await this.service.getSourcePlatform(dto);
   }
 
-  @ApiOperation({ summary: 'Retrieve data by date range' })
+  @ApiOperation({ summary: 'Retrieve data by queue creator' })
   @Get('/get-queue-creator')
   public async getQueueCreator(@Body() dto: QueueCreatorDto) {
     return await this.service.getQueueCreator(dto);
   }
 
-  @ApiOperation({ summary: 'Retrieve data by date range' })
+  @ApiOperation({ summary: 'Retrieve data by queue near me' })
   @Get('/get-queue-near-me')
   public async getQueueNearMe(@Body() dto: QueueNearMeDto) {
     return await this.service.getQueueNearMe(dto);
   }
 
-  @ApiOperation({ summary: 'Retrieve data by date range' })
+  @ApiOperation({ summary: 'Retrieve data by created date' })
   @Get('/get-queue-created-date')
   public async getQueueCreatedDate(@Body() dto: QueueCreatedDateDto) {
     return await this.service.getQueueCreatedDate(dto);
   }
 
-  @ApiOperation({ summary: 'Retrieve data by date range' })
+  @ApiOperation({ summary: 'Retrieve data by queue name' })
   @Get('/get-queue-name')
   public async getQueueName(@Body() dto: QueueNameDto) {
     return await this.service.getQueueName(dto);
