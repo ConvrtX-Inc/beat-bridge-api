@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Request, UseGuards } from '@nestjs/common';
+import {Body, Controller, Get, Post, Request, UseGuards} from '@nestjs/common';
 import { QueuePlaylistService } from './queue-playlist.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -44,31 +44,31 @@ export class QueuePlaylistController implements CrudController<QueuePlaylist> {
   }
 
   @ApiOperation({ summary: 'Retrieve data by source platform' })
-  @Get('/get-source-platform')
+  @Post('/get-source-platform')
   public async getSourcePlatform(@Body() dto: SourcePlatformDto) {
     return await this.service.getSourcePlatform(dto);
   }
 
   @ApiOperation({ summary: 'Retrieve data by queue creator' })
-  @Get('/get-queue-creator')
+  @Post('/get-queue-creator')
   public async getQueueCreator(@Body() dto: QueueCreatorDto) {
     return await this.service.getQueueCreator(dto);
   }
 
   @ApiOperation({ summary: 'Retrieve data by queue near me' })
-  @Get('/get-queue-near-me')
+  @Post('/get-queue-near-me')
   public async getQueueNearMe(@Body() dto: QueueNearMeDto) {
     return await this.service.getQueueNearMe(dto);
   }
 
   @ApiOperation({ summary: 'Retrieve data by created date' })
-  @Get('/get-queue-created-date')
+  @Post('/get-queue-created-date')
   public async getQueueCreatedDate(@Body() dto: QueueCreatedDateDto) {
     return await this.service.getQueueCreatedDate(dto);
   }
 
   @ApiOperation({ summary: 'Retrieve data by queue name' })
-  @Get('/get-queue-name')
+  @Post('/get-queue-name')
   public async getQueueName(@Body() dto: QueueNameDto) {
     return await this.service.getQueueName(dto);
   }
