@@ -40,3 +40,5 @@ lerna-debug.log*
 /files
 .env
 /ormconfig.json
+yarn.lock
+package-lock.json
