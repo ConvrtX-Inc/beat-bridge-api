@@ -1,5 +1,5 @@
 {
-  "name": "guided",
+  "name": "beat-bridge",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -43,6 +43,9 @@
     "@nestjsx/crud": "4.6.2",
     "@nestjsx/crud-typeorm": "4.6.2",
     "apple-signin-auth": "1.5.1",
+    
+    "aws-sdk": "2.1003.0",
+
     "bcryptjs": "2.4.3",
     "class-transformer": "0.3.1",
     "class-validator": "0.13.1",

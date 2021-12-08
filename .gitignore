@@ -38,7 +38,9 @@ lerna-debug.log*
 
 .data
 /files
+
 .env
 /ormconfig.json
 yarn.lock
 package-lock.json
+
