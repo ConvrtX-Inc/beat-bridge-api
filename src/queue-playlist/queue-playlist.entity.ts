@@ -28,6 +28,7 @@ export class QueuePlaylist extends EntityHelper {
   @Column({ type: 'simple-json', nullable: true })
   item_metadata?: string | null;
 
+  @IsOptional()
   @ApiProperty({ example: true })
   @Column({ type: 'text', nullable: true, default: '' })
   item_link: string | null;

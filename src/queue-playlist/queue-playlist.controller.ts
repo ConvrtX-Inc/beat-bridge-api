@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Post, Request, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, Param, Post, Request, UseGuards} from '@nestjs/common';
 import { QueuePlaylistService } from './queue-playlist.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -71,5 +71,13 @@ export class QueuePlaylistController implements CrudController<QueuePlaylist> {
   @Post('/get-queue-name')
   public async getQueueName(@Body() dto: QueueNameDto) {
     return await this.service.getQueueName(dto);
+  }
+
+  @ApiOperation({ summary: 'Retrieve queue songs by queue id' })
+  @Get('/get-queue-songs/:queue_id')
+  public async getQueueSongs(@Param('queue_id') queue_id: string) {
+    return await this.service.findManyEntities(
+      { where: { user_queue_id: queue_id } }
+    );
   }
 }

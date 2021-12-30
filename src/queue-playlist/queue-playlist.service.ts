@@ -83,7 +83,7 @@ export class QueuePlaylistService extends TypeOrmCrudService<QueuePlaylist> {
         'queue_playlist.item_link as item_link',
         'uq.name as name',
       ])
-      .where('queue_playlist.item_link  like %' + dto.source + '%' + '');
+      .where(`queue_playlist.item_link  like  '%${dto.source}%'`);
     return await query.getRawMany();
   }
 
