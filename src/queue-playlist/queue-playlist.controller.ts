@@ -1,4 +1,4 @@
-import {Body, Controller, Get, Param, Post, Request, UseGuards} from '@nestjs/common';
+import {Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Put, Request, UseGuards} from '@nestjs/common';
 import { QueuePlaylistService } from './queue-playlist.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -79,5 +79,18 @@ export class QueuePlaylistController implements CrudController<QueuePlaylist> {
     return await this.service.findManyEntities(
       { where: { user_queue_id: queue_id } }
     );
+  }
+
+  @ApiOperation({ summary: 'Increment total play count' })
+  @HttpCode(HttpStatus.OK)
+  @Put('/increment-play-count/:playlist_id')
+  public async incrementPlayCount(@Param('playlist_id') playlist_id: string) {
+    return this.service.incrementTotalPlayCount(playlist_id);
+  }
+
+  @ApiOperation({ summary: 'Get Most Played Songs' })
+  @Get('/most-played/:queue_id')
+  public async getMostPlayedSongs(@Param('queue_id') queue_id: string) {
+    return this.service.getMostPlayed(queue_id);
   }
 }
