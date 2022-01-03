@@ -33,6 +33,11 @@ export class QueuePlaylist extends EntityHelper {
   @Column({ type: 'text', nullable: true, default: '' })
   item_link: string | null;
 
+  @IsOptional()
+  @ApiProperty({example: 1})
+  @Column({type: 'int', nullable: true, default : 0 })
+  total_play_count: number | null;
+
   @CreateDateColumn()
   created_date: Date;
 
