@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { QueuePlaylist } from './queue-playlist.entity';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -83,7 +83,7 @@ export class QueuePlaylistService extends TypeOrmCrudService<QueuePlaylist> {
         'queue_playlist.item_link as item_link',
         'uq.name as name',
       ])
-      .where('queue_playlist.item_link  like %' + dto.source + '%' + '');
+      .where(`queue_playlist.item_link  like  '%${dto.source}%'`);
     return await query.getRawMany();
   }
 
@@ -144,9 +144,9 @@ export class QueuePlaylistService extends TypeOrmCrudService<QueuePlaylist> {
       ])
       .where(
         'queue_playlist.created_date::timestamp::date  like %' +
-          dto.date +
-          '%' +
-          '',
+        dto.date +
+        '%' +
+        '',
       );
     return await query.getRawMany();
   }
@@ -168,5 +168,31 @@ export class QueuePlaylistService extends TypeOrmCrudService<QueuePlaylist> {
       ])
       .where('queue_playlist.item_metadata  like %' + dto.name + '%' + '');
     return await query.getRawMany();
+  }
+
+  async incrementTotalPlayCount(playlist_id: string) {
+    const playlist = await this.queuePlaylistsRepository.findOne({ where: { id: playlist_id } });
+
+    if (!playlist) {
+      throw new HttpException(
+        {
+          status: HttpStatus.NOT_FOUND,
+          error: `notFound`,
+        },
+        HttpStatus.NOT_FOUND,
+      );
+    }
+    playlist.total_play_count += 1;
+    playlist.save();
+    return playlist;
+  }
+
+  async getMostPlayed(queue_id: string) {
+    const query = this.queuePlaylistsRepository.createQueryBuilder("queue_playlist");
+    query.select()
+      .orderBy('queue_playlist.total_play_count', 'DESC')
+      .where('queue_playlist.user_queue_id = :queue_id', {queue_id: queue_id})
+      .andWhere('queue_playlist.total_play_count > 1');
+    return query.getMany();
   }
 }
