@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, Validate } from 'class-validator';
+import { IsNotEmpty, IsOptional, Validate } from 'class-validator';
 import { IsExist } from 'src/utils/validators/is-exists.validator';
 import { Transform } from 'class-transformer';
 
@@ -14,6 +14,14 @@ export class AuthEmailLoginDto {
   @ApiProperty()
   @IsNotEmpty()
   password: string;
+
+  @IsNotEmpty()
+  @ApiProperty({ example: '1.28210155945393' })
+  latitude?: string;
+
+  @IsNotEmpty()
+  @ApiProperty({ example: '103.81722480263163' })
+  longitude?: string;
 }
 
 export class AuthEmailLoginUsernameDto {
@@ -27,4 +35,12 @@ export class AuthEmailLoginUsernameDto {
   @ApiProperty()
   @IsNotEmpty()
   password: string;
+
+  @IsNotEmpty()
+  @ApiProperty({ example: '1.28210155945393' })
+  latitude?: string;
+
+  @IsNotEmpty()
+  @ApiProperty({ example: '103.81722480263163' })
+  longitude?: string;
 }
