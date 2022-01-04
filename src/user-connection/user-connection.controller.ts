@@ -74,7 +74,7 @@ export class UserConnectionController
     return this.service.delete(request.params.id);
   }
 
-  @Post('closest-friends')
+  @Post('nearest-friends')
   @HttpCode(HttpStatus.OK)
   public async getClosesUsers(
     @Body() dto: FindClosestUsersDto,

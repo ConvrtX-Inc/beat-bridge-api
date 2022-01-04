@@ -96,7 +96,7 @@ export class UserConnectionService extends TypeOrmCrudService<UserConnection> {
             parseFloat(friends[i]['latitude']),
             parseFloat(friends[i]['longitude']),
             'K',
-          ) <= 0.1
+          ) <= 1
         ) {
           results.push(friends[i]);
         }
