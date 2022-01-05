@@ -14,6 +14,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Crud, CrudController, Override } from '@nestjsx/crud';
 import { UserConnection } from './user-connection.entity';
 import { SendFriendRequestDto } from './dtos/send-friend-request.dto';
+import { FindClosestUsersDto } from '../users/dtos/find-closest-users.dto';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
@@ -71,5 +72,18 @@ export class UserConnectionController
   @Override()
   async deleteOne(@Request() request) {
     return this.service.delete(request.params.id);
+  }
+
+  @Post('nearest-friends')
+  @HttpCode(HttpStatus.OK)
+  public async getClosesUsers(
+    @Body() dto: FindClosestUsersDto,
+    @Request() request,
+  ) {
+    return await this.service.getClosesUsers(
+      dto.latitude,
+      dto.longitude,
+      request.user,
+    );
   }
 }

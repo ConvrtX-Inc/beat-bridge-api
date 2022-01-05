@@ -32,6 +32,11 @@ export class UserConnection extends EntityHelper {
   @Column({ nullable: true })
   to_user_id?: string | null;
 
+  @IsOptional()
+  @ApiProperty({ example: true })
+  @Column({ type: 'boolean', nullable: true, default: 'FALSE' })
+  is_accepted: boolean | null;
+
   @CreateDateColumn()
   created_date: Date;
 

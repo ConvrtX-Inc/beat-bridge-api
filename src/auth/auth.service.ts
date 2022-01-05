@@ -15,6 +15,8 @@ import { AuthRegisterLoginDto } from './dtos/auth-register-login.dto';
 import { UsersService } from 'src/users/users.service';
 import { ForgotService } from 'src/forgot/forgot.service';
 import { MailService } from 'src/mail/mail.service';
+import { IsOptional } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
 
 @Injectable()
 export class AuthService {
@@ -34,30 +36,9 @@ export class AuthService {
       },
     });
 
-    // if (!user || (user && onlyAdmin && user.userType.name != 'Admin')) {
-    //   throw new HttpException(
-    //     {
-    //       status: HttpStatus.UNPROCESSABLE_ENTITY,
-    //       errors: {
-    //         email: 'notFound',
-    //       },
-    //     },
-    //     HttpStatus.UNPROCESSABLE_ENTITY,
-    //   );
-    // }
-
-    if (user.provider !== AuthProvidersEnum.email) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            email: `needLoginViaProvider:${user.provider}`,
-          },
-        },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
-    }
-
+    user.latitude = loginDto.latitude;
+    user.longitude = loginDto.longitude;
+    await user.save();
     const isValidPassword = await bcrypt.compare(
       loginDto.password,
       user.password,
@@ -90,6 +71,10 @@ export class AuthService {
         username: loginDto.username,
       },
     });
+
+    user.latitude = loginDto.latitude;
+    user.longitude = loginDto.longitude;
+    await user.save();
 
     const isValidPassword = await bcrypt.compare(
       loginDto.password,
