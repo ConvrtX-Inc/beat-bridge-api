@@ -97,6 +97,16 @@ export class User extends EntityHelper {
   socialId: string | null;
 
   @IsOptional()
+  @ApiProperty({ example: '' })
+  @Column({ type: 'text', nullable: true })
+  latitude?: string;
+
+  @IsOptional()
+  @ApiProperty({ example: '' })
+  @Column({ type: 'text', nullable: true })
+  longitude?: string;
+
+  @IsOptional()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   created_date?: string;
 
