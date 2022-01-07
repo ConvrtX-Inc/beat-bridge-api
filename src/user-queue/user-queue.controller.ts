@@ -2,8 +2,15 @@ import { Controller, Request, UseGuards } from '@nestjs/common';
 import { UserQueueService } from './user-queue.service';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
-import { Crud, CrudController, Override } from '@nestjsx/crud';
+import {
+  Crud,
+  CrudController,
+  CrudRequest,
+  Override,
+  ParsedRequest,
+} from '@nestjsx/crud';
 import { UserQueue } from './user-queue.entity';
+import { UsersService } from '../users/users.service';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
@@ -32,10 +39,55 @@ import { UserQueue } from './user-queue.entity';
   version: '1',
 })
 export class UserQueueController implements CrudController<UserQueue> {
-  constructor(public service: UserQueueService) {}
+  constructor(
+    public service: UserQueueService,
+    public userService: UsersService,
+  ) {}
 
   get base(): CrudController<UserQueue> {
     return this;
+  }
+
+  @Override('getManyBase')
+  async getMany(@ParsedRequest() req: CrudRequest) {
+    const returnResponse = [];
+    req.parsed.sort = [{ field: 'created_date', order: 'DESC' }];
+    const users = await this.service.getMany(req);
+    const tempUser = [];
+    let user = {};
+    if (users instanceof Array) {
+      for (const i in users) {
+        let data = {
+          user: undefined,
+        };
+        data = users[i];
+
+        if (!tempUser.includes(users[i].user_id)) {
+          tempUser.push(users[i].user_id);
+          user = await this.userService.findOne({
+            id: users[i].user_id,
+          });
+        }
+        data.user = user;
+        returnResponse.push(data);
+      }
+      return returnResponse;
+    }
+  }
+
+  @Override('getOneBase')
+  async getOne(@ParsedRequest() req: CrudRequest) {
+    const user = await this.service.getOne(req);
+    let data = {
+      user: undefined,
+    };
+    data = user;
+
+    data.user = await this.userService.findOne({
+      id: user.user_id,
+    });
+
+    return data;
   }
 
   @Override()
