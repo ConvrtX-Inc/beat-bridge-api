@@ -29,6 +29,8 @@ export class UserQueue extends EntityHelper {
   @Column({ length: 100 })
   name?: string;
 
+  user: any;
+
   @CreateDateColumn()
   created_date: Date;
 

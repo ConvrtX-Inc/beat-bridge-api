@@ -24,6 +24,10 @@ export class UserConnection extends EntityHelper {
   @Column({ nullable: true })
   from_user_id?: string | null;
 
+  from_user: any;
+
+  to_user: any;
+
   @IsOptional()
   @ApiProperty({ example: '9d8e6d30-7b9a-44a1-8f96-a6be1dcd6f9d' })
   @Validate(IsExist, ['User', 'id'], {
