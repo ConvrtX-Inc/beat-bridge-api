@@ -32,6 +32,10 @@ export class QueueMember extends EntityHelper {
   @Column({ nullable: true })
   user_id?: string | null;
 
+  user: any;
+
+  user_queue: any;
+
   @ApiProperty({ example: true })
   @Column({ type: 'boolean', nullable: true, default: 'TRUE' })
   is_admin: boolean | null;
