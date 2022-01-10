@@ -85,7 +85,7 @@ export class QueueMemberController implements CrudController<QueueMember> {
           });
         }
         data.user = user;
-        data.user_queue = userQueue;
+        data.user_queue = userQueue ?? [];
         returnResponse.push(data);
       }
     }
@@ -122,7 +122,7 @@ export class QueueMemberController implements CrudController<QueueMember> {
           });
         }
         data.user = user;
-        data.user_queue = userQueue;
+        data.user_queue = userQueue ?? [];
         returnResponse.push(data);
       }
     }
