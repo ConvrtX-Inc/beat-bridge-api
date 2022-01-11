@@ -9,14 +9,12 @@ import {
 import { AuthUpdateDto } from './dtos/auth-update.dto';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import * as crypto from 'crypto';
-import { AuthProvidersEnum } from './auth-providers.enum';
 import { SocialInterface } from 'src/social/interfaces/social.interface';
 import { AuthRegisterLoginDto } from './dtos/auth-register-login.dto';
 import { UsersService } from 'src/users/users.service';
 import { ForgotService } from 'src/forgot/forgot.service';
 import { MailService } from 'src/mail/mail.service';
-import { IsOptional } from 'class-validator';
-import { ApiProperty } from '@nestjs/swagger';
+import StripeService from '../stripe/stripe.service';
 
 @Injectable()
 export class AuthService {
@@ -25,6 +23,7 @@ export class AuthService {
     private usersService: UsersService,
     private forgotService: ForgotService,
     private mailService: MailService,
+    private stripeService: StripeService,
   ) {}
 
   async validateLogin(
@@ -35,6 +34,14 @@ export class AuthService {
         email: loginDto.email,
       },
     });
+
+    if (!user.stripe_customer_id) {
+      const stripeCustomer = await this.stripeService.createCustomer(
+        user.username,
+        user.email,
+      );
+      user.stripe_customer_id = stripeCustomer.id;
+    }
 
     user.latitude = loginDto.latitude;
     user.longitude = loginDto.longitude;
@@ -71,6 +78,14 @@ export class AuthService {
         username: loginDto.username,
       },
     });
+
+    if (!user.stripe_customer_id) {
+      const stripeCustomer = await this.stripeService.createCustomer(
+        user.username,
+        user.email,
+      );
+      user.stripe_customer_id = stripeCustomer.id;
+    }
 
     user.latitude = loginDto.latitude;
     user.longitude = loginDto.longitude;
@@ -120,6 +135,15 @@ export class AuthService {
       },
     });
 
+    if (!user.stripe_customer_id) {
+      const stripeCustomer = await this.stripeService.createCustomer(
+        user.username,
+        user.email,
+      );
+      user.stripe_customer_id = stripeCustomer.id;
+      await user.save();
+    }
+
     if (user) {
       if (socialEmail && !userByEmail) {
         user.email = socialEmail;
@@ -159,11 +183,16 @@ export class AuthService {
       .update(randomStringGenerator())
       .digest('hex');
 
+    const stripeCustomer = await this.stripeService.createCustomer(
+      dto.username,
+      dto.email,
+    );
     await this.usersService.saveEntity({
       ...dto,
       email: dto.email,
       phone_no: dto.phone_number,
       username: dto.username,
+      stripe_customer_id: stripeCustomer.id,
       hash,
     });
 
@@ -191,6 +220,14 @@ export class AuthService {
         },
         HttpStatus.NOT_FOUND,
       );
+    }
+
+    if (!user.stripe_customer_id) {
+      const stripeCustomer = await this.stripeService.createCustomer(
+        user.username,
+        user.email,
+      );
+      user.stripe_customer_id = stripeCustomer.id;
     }
 
     user.hash = null;

@@ -72,7 +72,14 @@ export class UsersController implements CrudController<User> {
 
   @Post('nearest-users')
   @HttpCode(HttpStatus.OK)
-  public async getClosestUsers(@Body() dto: FindClosestUsersDto) {
-    return await this.service.getClosestUsers(dto.latitude, dto.longitude);
+  public async getClosestUsers(
+    @Body() dto: FindClosestUsersDto,
+    @Request() request,
+  ) {
+    return await this.service.getClosestUsers(
+      dto.latitude,
+      dto.longitude,
+      request.user,
+    );
   }
 }
