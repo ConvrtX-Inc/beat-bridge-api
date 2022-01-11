@@ -28,11 +28,19 @@ export class UsersService extends TypeOrmCrudService<User> {
   }
 
   async getOneBase(id: string) {
-    return await this.usersRepository.findOne({
+    const results = await this.usersRepository.findOne({
       where: {
         id: id,
       },
     });
+    return {
+      status: HttpStatus.OK,
+      response: {
+        data: {
+          details: results ?? [],
+        },
+      },
+    };
   }
 
   async saveEntity(data: DeepPartial<User>) {
