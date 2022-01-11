@@ -32,6 +32,7 @@ import { QueueMemberModule } from './queue-member/queue-member.module';
 import { UserConnectionModule } from './user-connection/user-connection.module';
 import { QueuePlaylistModule } from './queue-playlist/queue-playlist.module';
 import { AvatarModule } from './avatar/avatar.module';
+import { UserSubscriptionModule } from './user-subscription/user-subscription.module';
 
 @Module({
   imports: [
@@ -87,6 +88,7 @@ import { AvatarModule } from './avatar/avatar.module';
     UserConnectionModule,
     AvatarModule,
     QueuePlaylistModule,
+    UserSubscriptionModule,
   ],
 })
 export class AppModule {}
