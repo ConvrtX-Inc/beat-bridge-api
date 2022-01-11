@@ -9,6 +9,7 @@ import { AnonymousStrategy } from './strategies/anonymous.strategy';
 import { UsersModule } from 'src/users/users.module';
 import { ForgotModule } from 'src/forgot/forgot.module';
 import { MailModule } from 'src/mail/mail.module';
+import { StripeModule } from 'src/stripe/stripe.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { MailModule } from 'src/mail/mail.module';
     ForgotModule,
     PassportModule,
     MailModule,
+    StripeModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

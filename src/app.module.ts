@@ -33,6 +33,8 @@ import { UserConnectionModule } from './user-connection/user-connection.module';
 import { QueuePlaylistModule } from './queue-playlist/queue-playlist.module';
 import { AvatarModule } from './avatar/avatar.module';
 import { UserSubscriptionModule } from './user-subscription/user-subscription.module';
+import { StripeModule } from './stripe/stripe.module';
+import { ChargeModule } from './charge/charge.module';
 
 @Module({
   imports: [
@@ -73,6 +75,8 @@ import { UserSubscriptionModule } from './user-subscription/user-subscription.mo
       inject: [ConfigService],
       resolvers: [new HeaderResolver(['x-custom-lang'])],
     }),
+    StripeModule,
+    ChargeModule,
     UsersModule,
     FilesModule,
     AuthModule,

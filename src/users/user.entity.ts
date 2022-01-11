@@ -64,6 +64,10 @@ export class User extends EntityHelper {
 
   public previousPassword: string;
 
+  @ApiProperty({ example: '' })
+  @Column({ nullable: true })
+  stripe_customer_id: string;
+
   @AfterLoad()
   public loadPreviousPassword(): void {
     this.previousPassword = this.password;
