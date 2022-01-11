@@ -28,11 +28,19 @@ export class UsersService extends TypeOrmCrudService<User> {
   }
 
   async getOneBase(id: string) {
-    return await this.usersRepository.findOne({
+    const results = await this.usersRepository.findOne({
       where: {
         id: id,
       },
     });
+    return {
+      status: HttpStatus.OK,
+      response: {
+        data: {
+          details: results ?? [],
+        },
+      },
+    };
   }
 
   async saveEntity(data: DeepPartial<User>) {
@@ -42,7 +50,7 @@ export class UsersService extends TypeOrmCrudService<User> {
   async softDelete(id: string): Promise<void> {
     await this.usersRepository.softDelete(id);
   }
-  async getClosestUsers(latitude: string, longitude: string) {
+  async getClosestUsers(latitude: string, longitude: string, user: User) {
     const query = this.usersRepository.createQueryBuilder('u');
     const users = await query
       .select([
@@ -52,11 +60,18 @@ export class UsersService extends TypeOrmCrudService<User> {
         'u.latitude as latitude',
         'u.longitude as longitude',
       ])
+      .where("u.id::text <> '" + user.id + "'")
       .getRawMany();
 
     const results = [];
     for (let i = 0; i < users.length; i++) {
-      if (!Number.isNaN(parseFloat(users[i]['latitude']))) {
+      const use = await this.usersRepository
+        .createQueryBuilder('u')
+        .innerJoin('user_connection', 'uc', 'uc.to_user_id::text = u.id::text')
+        .select(['u.username as username'])
+        .where("uc.to_user_id::text = '" + users[i]['id'] + "'")
+        .getRawOne();
+      if (!use && !Number.isNaN(parseFloat(users[i]['latitude']))) {
         if (
           this.closestLocation(
             parseFloat(latitude),
