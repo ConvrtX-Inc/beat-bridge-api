@@ -32,6 +32,7 @@ import { QueueMemberModule } from './queue-member/queue-member.module';
 import { UserConnectionModule } from './user-connection/user-connection.module';
 import { QueuePlaylistModule } from './queue-playlist/queue-playlist.module';
 import { AvatarModule } from './avatar/avatar.module';
+import { UserSubscriptionModule } from './user-subscription/user-subscription.module';
 import { StripeModule } from './stripe/stripe.module';
 import { ChargeModule } from './charge/charge.module';
 
@@ -91,6 +92,7 @@ import { ChargeModule } from './charge/charge.module';
     UserConnectionModule,
     AvatarModule,
     QueuePlaylistModule,
+    UserSubscriptionModule,
   ],
 })
 export class AppModule {}
