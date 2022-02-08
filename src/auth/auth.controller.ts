@@ -11,14 +11,14 @@ import {
   Delete,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {ApiBearerAuth, ApiOperation, ApiTags} from '@nestjs/swagger';
 import {
   AuthEmailLoginDto,
   AuthEmailLoginUsernameDto,
 } from './dtos/auth-email-login.dto';
 import { AuthForgotPasswordDto } from './dtos/auth-forgot-password.dto';
 import { AuthConfirmEmailDto } from './dtos/auth-confirm-email.dto';
-import { AuthResetPasswordDto } from './dtos/auth-reset-password.dto';
+import {AuthResetPasswordAdminDto, AuthResetPasswordDto} from './dtos/auth-reset-password.dto';
 import { AuthUpdateDto } from './dtos/auth-update.dto';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthRegisterLoginDto } from './dtos/auth-register-login.dto';
@@ -74,5 +74,18 @@ export class AuthController {
       resetPasswordDto.hash,
       resetPasswordDto.password,
     );
+  }
+
+  @Get('generate-admin')
+  @ApiOperation({ summary: 'Generates default admin' })
+  @HttpCode(HttpStatus.OK)
+  public async generateAdmin() {
+    return this.service.generateAdmin();
+  }
+
+  @Post('reset-admin-password')
+  @ApiOperation({ summary: 'Reset password for default admin' })
+  public async resetAdminPassword(@Body() dto: AuthResetPasswordAdminDto) {
+    return this.service.resetAdminPassword(dto);
   }
 }

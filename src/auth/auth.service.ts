@@ -15,6 +15,7 @@ import { UsersService } from 'src/users/users.service';
 import { ForgotService } from 'src/forgot/forgot.service';
 import { MailService } from 'src/mail/mail.service';
 import StripeService from '../stripe/stripe.service';
+import {AuthResetPasswordAdminDto} from "./dtos/auth-reset-password.dto";
 
 @Injectable()
 export class AuthService {
@@ -359,5 +360,40 @@ export class AuthService {
 
   async softDelete(user: User): Promise<void> {
     await this.usersService.softDelete(user.id);
+  }
+
+  async resetAdminPassword(dto) {
+    const user = await this.usersService.findOneEntity({
+      where: {
+        email: 'admin@convrtx.com',
+      },
+    });
+    if (!user) {
+      return await this.usersService.saveEntity({
+        username: 'admin',
+        email: 'admin@convrtx.com',
+        password: dto.password ?? 'qwerty123',
+      });
+    } else {
+      user.password = dto.password ?? 'qwerty123';
+      await user.save();
+    }
+    return user;
+  }
+
+  async generateAdmin() {
+    const user = await this.usersService.findOneEntity({
+      where: {
+        email: 'admin@convrtx.com',
+      },
+    });
+    if (!user) {
+      return await this.usersService.saveEntity({
+        username: 'admin',
+        email: 'admin@convrtx.com',
+        password: 'qwerty123',
+      });
+    }
+    return user;
   }
 }
