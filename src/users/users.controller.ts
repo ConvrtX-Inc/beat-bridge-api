@@ -1,8 +1,8 @@
 import {
   Body,
-  Controller,
+  Controller, Get,
   HttpCode,
-  HttpStatus,
+  HttpStatus, Param,
   Post,
   Request,
   UseGuards,
@@ -14,6 +14,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import validationOptions from 'src/utils/validation-options';
 import { FindClosestUsersDto } from './dtos/find-closest-users.dto';
+import {UpdateUserDto} from "./dtos/update-user.dto";
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
@@ -63,6 +64,11 @@ export class UsersController implements CrudController<User> {
   @Override('getOneBase')
   async getOneAndDoStuff(@Request() req) {
     return this.service.getOneBase(req.params.id);
+  }
+
+  @Override('updateOneBase')
+  async getUpdateOneBase(@Request() request, @Body() dto: UpdateUserDto) {
+    return this.service.updateUser(dto, request.params.id);
   }
 
   @Override()

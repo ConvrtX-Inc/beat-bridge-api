@@ -4,23 +4,21 @@ import {
   Get,
   HttpCode,
   HttpStatus,
-  Request,
   Post,
-  UseGuards,
-  Patch,
-  Delete,
+  Param,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
-import {ApiBearerAuth, ApiOperation, ApiTags} from '@nestjs/swagger';
+import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import {
   AuthEmailLoginDto,
   AuthEmailLoginUsernameDto,
 } from './dtos/auth-email-login.dto';
 import { AuthForgotPasswordDto } from './dtos/auth-forgot-password.dto';
 import { AuthConfirmEmailDto } from './dtos/auth-confirm-email.dto';
-import {AuthResetPasswordAdminDto, AuthResetPasswordDto} from './dtos/auth-reset-password.dto';
-import { AuthUpdateDto } from './dtos/auth-update.dto';
-import { AuthGuard } from '@nestjs/passport';
+import {
+  AuthResetPasswordAdminDto,
+  AuthResetPasswordDto,
+} from './dtos/auth-reset-password.dto';
 import { AuthRegisterLoginDto } from './dtos/auth-register-login.dto';
 
 @ApiTags('Auth')
@@ -87,5 +85,11 @@ export class AuthController {
   @ApiOperation({ summary: 'Reset password for default admin' })
   public async resetAdminPassword(@Body() dto: AuthResetPasswordAdminDto) {
     return this.service.resetAdminPassword(dto);
+  }
+
+  @Get('confirm-changes/:hash')
+  @HttpCode(HttpStatus.OK)
+  public async confirmChanges(@Param('hash') hash: string) {
+    return this.service.confirmChanges(hash);
   }
 }
