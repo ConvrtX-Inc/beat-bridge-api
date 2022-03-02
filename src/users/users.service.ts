@@ -207,7 +207,7 @@ export class UsersService extends TypeOrmCrudService<User> {
       status: HttpStatus.OK,
       sent_data: dto,
       response: {
-        data: user,
+        data: userUpdateRequest,
         message: 'Successfully sent email.Waiting for user confirmation',
       },
     };
