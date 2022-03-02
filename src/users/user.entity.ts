@@ -84,12 +84,13 @@ export class User extends EntityHelper {
 
   @IsOptional()
   @ApiProperty({ example: 'cbcfa8b8-3a25-4adb-a9c6-e325f0d0f3ae' })
-  @Column({ type: 'uuid', nullable: true })
+  @Transform((value: string | null) => (value == '' ? null : value))
   @Validate(IsExist, ['Avatar', 'id'], {
-    message: 'statusNotExists',
+    message: 'avatar id does not exists',
     groups: [CrudValidationGroups.UPDATE],
   })
-  avatar_id?: string;
+  @Column({ nullable: true })
+  avatar_id?: string | null;
 
   @Exclude({ toPlainOnly: true })
   @Column({ nullable: true })
