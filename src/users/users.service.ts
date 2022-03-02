@@ -5,12 +5,18 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { FindOptions } from 'src/utils/types/find-options.type';
 import { DeepPartial } from 'src/utils/types/deep-partial.type';
+import { UpdateUserDto } from './dtos/update-user.dto';
+import { MailService } from 'src/mail/mail.service';
+import * as crypto from 'crypto';
+import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
+import { UserUpdateRequest } from '../user_update_request/user_update_request.entity';
 
 @Injectable()
 export class UsersService extends TypeOrmCrudService<User> {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    private mailService: MailService,
   ) {
     super(usersRepository);
   }
@@ -116,5 +122,94 @@ export class UsersService extends TypeOrmCrudService<User> {
       distance = distance * 0.8684;
     }
     return distance;
+  }
+
+  async updateUser(dto: UpdateUserDto, id) {
+    let hasDuplicateBoth = false;
+    let hasDuplicateEmail = false;
+    let hasDuplicateUsername = false;
+    let message = 'Successfully updated';
+    const user = await this.usersRepository.findOne({
+      where: {
+        id: id,
+      },
+    });
+    if (!user) {
+      return {
+        status: HttpStatus.BAD_REQUEST,
+        sent_data: dto,
+        response: {
+          message: 'User not found',
+        },
+      };
+    }
+    const query = this.usersRepository.createQueryBuilder('u');
+    const checkUserEmail = await query
+      .select(['u.id'])
+      .where(
+        "(u.id::text <> '" + id + "' AND u.email::text = '" + dto.email + "')",
+      )
+      .getRawMany();
+
+    const checkUserName = await query
+      .select(['u.id'])
+      .where(
+        "(u.id::text <> '" +
+          id +
+          "' AND u.username::text = '" +
+          dto.username +
+          "')",
+      )
+      .getRawMany();
+    hasDuplicateEmail = !!(checkUserEmail && checkUserEmail.length);
+    hasDuplicateUsername = !!(checkUserName && checkUserName.length);
+    hasDuplicateBoth = !!(hasDuplicateEmail && hasDuplicateUsername);
+    if (hasDuplicateEmail) {
+      message = 'Duplicate email.';
+    }
+    if (hasDuplicateUsername) {
+      message = 'Duplicate username.';
+    }
+    if (hasDuplicateBoth) {
+      message = 'Duplicate username and email.';
+    }
+    if (hasDuplicateEmail || hasDuplicateUsername || hasDuplicateBoth) {
+      return {
+        status: HttpStatus.BAD_REQUEST,
+        sent_data: dto,
+        response: {
+          message: message,
+        },
+      };
+    }
+    const hash = crypto
+      .createHash('sha256')
+      .update(randomStringGenerator())
+      .digest('hex');
+    await this.mailService.updateProfile({
+      to: user.email,
+      name: user.username,
+      data: {
+        hash,
+      },
+    });
+
+    const userUpdateRequest = new UserUpdateRequest();
+    userUpdateRequest.user_id = user.id;
+    userUpdateRequest.hash = hash;
+    userUpdateRequest.username = dto.username;
+    userUpdateRequest.email = dto.email;
+    userUpdateRequest.phone_no = dto.phone_number;
+    userUpdateRequest.password = dto.password;
+    await userUpdateRequest.save();
+
+    return {
+      status: HttpStatus.OK,
+      sent_data: dto,
+      response: {
+        data: userUpdateRequest,
+        message: 'Successfully sent email.Waiting for user confirmation',
+      },
+    };
   }
 }

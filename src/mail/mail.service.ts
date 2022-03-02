@@ -68,4 +68,31 @@ export class MailService {
       },
     });
   }
+
+  async updateProfile(mailData: MailData<{ hash: string }>) {
+    await this.mailerService.sendMail({
+      to: mailData.to,
+      from: {
+        name: this.configService.get('app.name'),
+        address: 'bernie@convrtx.com',
+      },
+      subject: 'Update profile confirmation',
+      text: `${this.configService.get(
+        'app.backendDomain',
+      )}api/v1/auth/confirm-changes/${mailData.data.hash} Confirm`,
+      template: './update-profile',
+      context: {
+        title: await this.i18n.t('common.confirmEmail'),
+        url: `${this.configService.get(
+          'app.backendDomain',
+        )}api/v1/auth/confirm-changes/${mailData.data.hash}`,
+        actionTitle: 'Confirm Update',
+        app_name: this.configService.get('app.name'),
+        client_name: mailData.name,
+        text1: 'Hi, ',
+        text2: 'We received a request to update your information on',
+        text3: 'Click to confirm update',
+      },
+    });
+  }
 }

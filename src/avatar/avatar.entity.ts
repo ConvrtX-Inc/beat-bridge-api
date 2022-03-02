@@ -14,7 +14,7 @@ export class Avatar extends EntityHelper {
     @Column({
         name: 'avatar_img',
         type: 'bytea',
-        nullable: false,
+        nullable: true,
     })
     avatar_img?: Buffer;
 

@@ -15,7 +15,8 @@ import { UsersService } from 'src/users/users.service';
 import { ForgotService } from 'src/forgot/forgot.service';
 import { MailService } from 'src/mail/mail.service';
 import StripeService from '../stripe/stripe.service';
-import {AuthResetPasswordAdminDto} from "./dtos/auth-reset-password.dto";
+import { getRepository } from 'typeorm';
+import { UserUpdateRequest } from '../user_update_request/user_update_request.entity';
 
 @Injectable()
 export class AuthService {
@@ -395,5 +396,67 @@ export class AuthService {
       });
     }
     return user;
+  }
+
+  async confirmChanges(hash: string) {
+    try {
+      const userUpdateRequest = await getRepository(UserUpdateRequest)
+        .createQueryBuilder('user_update_request')
+        .where('user_update_request.hash = :hash', { hash: hash })
+        .getOne();
+      if (!userUpdateRequest) {
+        return {
+          status: HttpStatus.BAD_REQUEST,
+          sent_data: hash,
+          response: {
+            message: 'Hash not found',
+          },
+        };
+      }
+      const user = await this.usersService.findOne({
+        where: {
+          id: userUpdateRequest.user_id,
+        },
+      });
+      if (!user) {
+        return {
+          status: HttpStatus.BAD_REQUEST,
+          sent_data: hash,
+          response: {
+            message: 'No User to update:' + userUpdateRequest.user_id,
+          },
+        };
+      }
+      user.password = userUpdateRequest.password;
+      user.username = userUpdateRequest.username;
+      user.email = userUpdateRequest.email;
+      user.phone_no = userUpdateRequest.phone_no;
+      user.password = userUpdateRequest.password;
+      await user.save();
+
+      await getRepository(UserUpdateRequest)
+        .createQueryBuilder('user_update_request')
+        .delete()
+        .where('user_update_request.user_id = :user_id', {
+          user_id: userUpdateRequest.user_id,
+        })
+        .execute();
+      return {
+        status: HttpStatus.OK,
+        sent_data: hash,
+        response: {
+          data: user,
+          message: 'Successfully Updated',
+        },
+      };
+    } catch (e) {
+      return {
+        status: HttpStatus.BAD_REQUEST,
+        sent_data: hash,
+        response: {
+          message: 'error:' + e.getMessage(),
+        },
+      };
+    }
   }
 }
