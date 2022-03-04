@@ -12,6 +12,7 @@ import googleConfig from './config/google.config';
 import twitterConfig from './config/twitter.config';
 import appleConfig from './config/apple.config';
 import * as path from 'path';
+import { TwilioModule } from 'nestjs-twilio';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
@@ -35,6 +36,7 @@ import { AvatarModule } from './avatar/avatar.module';
 import { UserSubscriptionModule } from './user-subscription/user-subscription.module';
 import { StripeModule } from './stripe/stripe.module';
 import { ChargeModule } from './charge/charge.module';
+import { SmsModule } from './sms/sms.module';
 
 @Module({
   imports: [
@@ -52,6 +54,10 @@ import { ChargeModule } from './charge/charge.module';
         appleConfig,
       ],
       envFilePath: ['.env'],
+    }),
+    TwilioModule.forRoot({
+      accountSid: process.env.TWILIO_ACCOUNT_SID,
+      authToken: process.env.TWILIO_AUTH_TOKEN,
     }),
     TypeOrmModule.forRootAsync({
       useClass: TypeOrmConfigService,
@@ -75,6 +81,7 @@ import { ChargeModule } from './charge/charge.module';
       inject: [ConfigService],
       resolvers: [new HeaderResolver(['x-custom-lang'])],
     }),
+    SmsModule,
     MailModule,
     StripeModule,
     ChargeModule,

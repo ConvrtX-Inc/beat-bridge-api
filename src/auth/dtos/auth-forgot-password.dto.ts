@@ -1,10 +1,19 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail } from 'class-validator';
+import { IsEmail, IsOptional } from 'class-validator';
 import { Transform } from 'class-transformer';
 
 export class AuthForgotPasswordDto {
   @ApiProperty()
-  @Transform((value: string) => value.toLowerCase().trim())
+  @Transform((value: string | null) =>
+    value == '' ? null : value.toLowerCase().trim(),
+  )
   @IsEmail()
-  email: string;
+  @IsOptional()
+  email?: string | null;
+
+  @ApiProperty()
+  @Transform((value: string | null) => (value == '' ? null : value))
+  @IsOptional()
+  phone_no?: string | null;
+
 }

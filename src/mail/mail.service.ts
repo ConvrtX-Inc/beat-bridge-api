@@ -61,9 +61,11 @@ export class MailService {
         }`,
         actionTitle: await this.i18n.t('common.resetPassword'),
         app_name: this.configService.get('app.name'),
-        text1: await this.i18n.t('reset-password.text1'),
-        text2: await this.i18n.t('reset-password.text2'),
-        text3: await this.i18n.t('reset-password.text3'),
+        text1: 'Hello ' + mailData.name,
+        text2:
+          'You have requested reset password on Beat Bridge App. Please use this code to reset password:' +
+          mailData.data.hash,
+        text3: '',
         text4: await this.i18n.t('reset-password.text4'),
       },
     });
