@@ -17,6 +17,9 @@ import { MailService } from 'src/mail/mail.service';
 import StripeService from '../stripe/stripe.service';
 import { getRepository } from 'typeorm';
 import { UserUpdateRequest } from '../user_update_request/user_update_request.entity';
+import { AuthForgotPasswordDto } from './dtos/auth-forgot-password.dto';
+import { SmsService } from '../sms/sms.service';
+import { AuthResetPasswordDto } from './dtos/auth-reset-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -26,6 +29,7 @@ export class AuthService {
     private forgotService: ForgotService,
     private mailService: MailService,
     private stripeService: StripeService,
+    private smsService: SmsService,
   ) {}
 
   async validateLogin(
@@ -197,14 +201,6 @@ export class AuthService {
       stripe_customer_id: stripeCustomer.id,
       hash,
     });
-
-    // await this.mailService.userSignUp({
-    //   to: user.email,
-    //   name: user.username,
-    //   data: {
-    //     hash,
-    //   },
-    // });
   }
 
   async confirmEmail(hash: string): Promise<void> {
@@ -239,66 +235,127 @@ export class AuthService {
     await user.save();
   }
 
-  async forgotPassword(email: string): Promise<void> {
-    const user = await this.usersService.findOneEntity({
-      where: {
-        email,
-      },
-    });
+  async forgotPassword(dto: AuthForgotPasswordDto) {
+    let user = null;
+    if (dto.email) {
+      user = await this.usersService.findOneEntity({
+        where: {
+          email: dto.email,
+        },
+      });
+    }
+    if (!user && dto.phone_no) {
+      user = await this.usersService.findOneEntity({
+        where: {
+          phone_no: dto.phone_no,
+        },
+      });
+    }
 
     if (!user) {
       throw new HttpException(
         {
           status: HttpStatus.UNPROCESSABLE_ENTITY,
           errors: {
-            email: 'emailNotExists',
+            user: 'user does not exists',
           },
         },
         HttpStatus.UNPROCESSABLE_ENTITY,
       );
     } else {
-      const hash = crypto
-        .createHash('sha256')
-        .update(randomStringGenerator())
-        .digest('hex');
-      await this.forgotService.saveEntity({
-        hash,
-        user,
-      });
-
-      await this.mailService.forgotPassword({
-        to: email,
-        name: user.username,
-        data: {
-          hash,
+      let hash = (Math.floor(Math.random() * 10000) + 10000)
+        .toString()
+        .substring(1);
+      hash = await this.checkIfExistHashOrGenerate(hash);
+      const forgot = await this.forgotService.findOneEntity({
+        where: {
+          user: user,
         },
       });
+      if (forgot) {
+        forgot.hash = hash;
+        await forgot.save();
+      } else {
+        await this.forgotService.saveEntity({
+          hash,
+          user,
+        });
+      }
+      if (dto.email) {
+        return await this.mailService.forgotPassword({
+          to: dto.email,
+          name: user.username,
+          data: {
+            hash,
+          },
+        });
+      } else {
+        return await this.smsService.send({
+          phone_number: user.phone_no.toString(),
+          message:
+            'You have requested reset password on Beat Bridge App. Please use this code to reset password:' +
+            hash,
+        });
+      }
     }
   }
-
-  async resetPassword(hash: string, password: string): Promise<void> {
+  async checkIfExistHashOrGenerate(hash) {
     const forgot = await this.forgotService.findOneEntity({
       where: {
-        hash,
+        hash: hash,
       },
     });
+    if (forgot) {
+      hash = (Math.floor(Math.random() * 10000) + 10000)
+        .toString()
+        .substring(1);
+    }
+    return hash;
+  }
+  async resetPassword(dto: AuthResetPasswordDto) {
+    try {
+      let user = null;
+      const forgot = await this.forgotService.findOneEntity({
+        where: {
+          hash: dto.hash,
+        },
+      });
+      if (!forgot) {
+        throw new HttpException(
+          {
+            status: HttpStatus.UNPROCESSABLE_ENTITY,
+            errors: {
+              hash: `notFound`,
+            },
+          },
+          HttpStatus.UNPROCESSABLE_ENTITY,
+        );
+      }
 
-    if (!forgot) {
-      throw new HttpException(
-        {
-          status: HttpStatus.UNPROCESSABLE_ENTITY,
-          errors: {
-            hash: `notFound`,
+      user = forgot.user;
+      user.password = dto.password;
+      await user.save();
+      await this.forgotService.softDelete(forgot.id);
+      return {
+        status: HttpStatus.OK,
+        sent_data: dto,
+        response: {
+          data: {
+            details: 'Successfully updated',
           },
         },
-        HttpStatus.UNPROCESSABLE_ENTITY,
-      );
+      };
+    } catch (error) {
+      return {
+        status: HttpStatus.BAD_REQUEST,
+        sent_data: dto,
+        response: {
+          data: {
+            details: 'Something went wrong: ' + error.message,
+          },
+        },
+      };
     }
-
-    const user = forgot.user;
-    user.password = password;
-    await user.save();
-    await this.forgotService.softDelete(forgot.id);
   }
 
   async me(user: User): Promise<User> {

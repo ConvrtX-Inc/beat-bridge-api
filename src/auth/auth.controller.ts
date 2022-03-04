@@ -41,12 +41,6 @@ export class AuthController {
     return this.service.validateUsernameLogin(loginDto);
   }
 
-  // @Post('admin/email/login')
-  // @HttpCode(HttpStatus.OK)
-  // public async adminLogin(@Body() loginDTO: AuthEmailLoginDto) {
-  //   return this.service.validateLogin(loginDTO, true);
-  // }
-
   @Post('username/register')
   @HttpCode(HttpStatus.CREATED)
   async register(@Body() createUserDto: AuthRegisterLoginDto) {
@@ -62,16 +56,13 @@ export class AuthController {
   @Post('forgot/password')
   @HttpCode(HttpStatus.OK)
   async forgotPassword(@Body() forgotPasswordDto: AuthForgotPasswordDto) {
-    return this.service.forgotPassword(forgotPasswordDto.email);
+    return this.service.forgotPassword(forgotPasswordDto);
   }
 
   @Post('reset/password')
   @HttpCode(HttpStatus.OK)
   async resetPassword(@Body() resetPasswordDto: AuthResetPasswordDto) {
-    return this.service.resetPassword(
-      resetPasswordDto.hash,
-      resetPasswordDto.password,
-    );
+    return this.service.resetPassword(resetPasswordDto);
   }
 
   @Get('generate-admin')

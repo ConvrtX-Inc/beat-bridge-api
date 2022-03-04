@@ -31,4 +31,7 @@ export class ForgotService {
   async softDelete(id: number): Promise<void> {
     await this.forgotRepository.softDelete(id);
   }
+  async hardDelete(id: number): Promise<void> {
+    await this.forgotRepository.delete(id);
+  }
 }
