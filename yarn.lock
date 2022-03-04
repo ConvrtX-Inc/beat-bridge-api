@@ -1073,9 +1073,10 @@
   integrity sha512-7EIraBEyRHEe7CH+Fm1XvgqU6uwZN8Q7jppJGcqjROMT29qhAuuOxYB1uEY5UMYQKEmA5D+5tBnhdaPXSsLONA==
 
 "@types/node@>=8.1.0":
-  version "17.0.21"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.21.tgz#864b987c0c68d07b4345845c3e63b75edd143644"
-  integrity sha512-DBZCJbhII3r90XbQxI8Y9IjjiiOGlZ0Hr32omXIZvwwZ7p4DMMXGrKXVyPfuoBOri9XNtL0UK69jYIBIsRX3QQ==
+  version "17.0.8"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-17.0.8.tgz#50d680c8a8a78fe30abe6906453b21ad8ab0ad7b"
+  integrity sha512-YofkM6fGv4gDJq78g4j0mMuGMkZVxZDgtU0JRdx6FgiJDG+0fY0GKVolOV8WqVmEhLCXkQRjwDdKyPxJp/uucg==
+
 
 "@types/parse-json@^4.0.0":
   version "4.0.0"
@@ -7017,9 +7018,9 @@ strip-json-comments@^3.1.0, strip-json-comments@^3.1.1:
   integrity sha512-6fPc+R4ihwqP6N/aIv2f1gMH8lOVtWQHoqC4yK6oSDVVocumAsfCqjkXnqiYMhmMwS/mEHLp7Vehlt3ql6lEig==
 
 stripe@^8.195.0:
-  version "8.207.0"
-  resolved "https://registry.yarnpkg.com/stripe/-/stripe-8.207.0.tgz#4b7002f19cecefbc3c48f09f6658c39e359f99c1"
-  integrity sha512-ZCjdqN2adGfrC5uAAo0v7IquzaiQ3+pDzB324/iV3Q3Deiot9VO7KMVSNVx/0i6E6ywhgV33ko3FMT7iUgxKYA==
+  version "8.195.0"
+  resolved "https://registry.yarnpkg.com/stripe/-/stripe-8.195.0.tgz#4d253e247aadb64d972488da9481fff743b58a11"
+  integrity sha512-pXEZFNJb4p9uZ69+B4A+zJEmBiFw3BzNG51ctPxUZij7ghFTnk2/RuUHmSGto2XVCcC46uG75czXVAvCUkOGtQ==
   dependencies:
     "@types/node" ">=8.1.0"
     qs "^6.6.0"
