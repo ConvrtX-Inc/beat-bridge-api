@@ -10,6 +10,7 @@ import { UsersModule } from 'src/users/users.module';
 import { ForgotModule } from 'src/forgot/forgot.module';
 import { MailModule } from 'src/mail/mail.module';
 import { StripeModule } from 'src/stripe/stripe.module';
+import { SmsModule } from 'src/sms/sms.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { StripeModule } from 'src/stripe/stripe.module';
     ForgotModule,
     PassportModule,
     MailModule,
+    SmsModule,
     StripeModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
