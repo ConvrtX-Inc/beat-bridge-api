@@ -5,6 +5,8 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptions } from '../utils/types/find-options.type';
 import { TypeOrmCrudService } from '@nestjsx/crud-typeorm';
 import { DeepPartial } from '../utils/types/deep-partial.type';
+import { CreateSysSupportDto } from './dto/create-syssupport.dto';
+
 
 @Injectable()
 export class SysSupportService extends TypeOrmCrudService<SysSupport>{
@@ -16,8 +18,8 @@ export class SysSupportService extends TypeOrmCrudService<SysSupport>{
         super(destinationsRepository);
     }
  /*
-   * find one entity
-   */
+  * find one entity
+  */
   async findOneEntity(options: FindOptions<SysSupport>) {
     return this.destinationsRepository.findOne({
       where: options.where,
