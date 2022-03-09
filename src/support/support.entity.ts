@@ -6,6 +6,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
+import { StatusEnum } from 'src/statuses/statuses.enum';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsOptional, Validate } from 'class-validator';
 import { EntityHelper } from 'src/utils/entity-helper';
@@ -29,7 +30,7 @@ export class SysSupport extends EntityHelper{
 
     @IsOptional()
     @Column({ nullable: false, type :'uuid' })
-    @ApiProperty({ example: 'e33986dd-c155-4566-8100-8a75d298e36b' })
+    @ApiProperty({ example: StatusEnum.active })
     status_id?: string | null;
     
     @Column({ nullable: false, type :'uuid' })

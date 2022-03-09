@@ -13,6 +13,7 @@ import { IsExist } from '../utils/validators/is-exists.validator';
 
 @Entity()
 export class QueueMember extends EntityHelper {
+  
   @PrimaryGeneratedColumn('uuid')
   id: string;
 

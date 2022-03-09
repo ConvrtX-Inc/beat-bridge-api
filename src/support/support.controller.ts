@@ -1,5 +1,5 @@
-import { Body, Controller, Req, Request, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpStatus, Param, Post,Patch, Req, Request, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import {
   Crud,
@@ -11,8 +11,8 @@ import {
 } from '@nestjsx/crud';
 import {SysSupport} from './support.entity';
 import {SysSupportService} from './support.service';
-import {CreateSysSupportDto} from './dto/create-syssupport.dto';
 import { request } from 'express';
+import { UpdateStatusDto } from './dto/status-update.dto';
 
 
 @ApiBearerAuth()
@@ -28,6 +28,11 @@ import { request } from 'express';
   query: {
     maxLimit: 50,
     alwaysPaginate: false,
+    join:{
+      status:{
+        eager:false
+      }
+    }
   },
   params: {
     id: {
@@ -44,4 +49,19 @@ export class SysSupportController implements CrudController<SysSupport> {
   get base(): CrudController<SysSupport> {return this;}
 
 
+  //Get SysSupport for a user
+  @ApiOperation({ summary: 'Retrieve members list by user id' })
+  @Get('/:userId')
+  async getMembersByQueueId(@Param('userId') userId: string) {
+    const supportTickets = await this.service.findManyEntities({
+      where: { user_id: userId }
+    });
+    return supportTickets;
+  }
+
+  @ApiOperation({ summary: 'Update ticket status' })
+  @Post('status')
+  async updateStatus(@Request() req:CrudRequest,@Body() dto: UpdateStatusDto) {
+    return this.service.updateStatus(req,dto);
+  }
 }
