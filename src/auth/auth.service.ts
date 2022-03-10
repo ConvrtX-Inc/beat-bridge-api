@@ -32,7 +32,7 @@ export class AuthService {
     private smsService: SmsService,
   ) {}
 
-  async validateLogin(
+  async validateMobielLogin(
     loginDto: AuthEmailLoginDto,
   ): Promise<{ token: string; user: User }> {
     const user = await this.usersService.findOneEntity({
@@ -75,7 +75,49 @@ export class AuthService {
       );
     }
   }
+async validateLogin(
+    loginDto: AuthEmailLoginDto,
+  ): Promise<{ token: string; user: User }> {
+    const user = await this.usersService.findOneEntity({
+      where: {
+        email: loginDto.email,
+      },
+    });
 
+    if (!user.stripe_customer_id) {
+      const stripeCustomer = await this.stripeService.createCustomer(
+        user.username,
+        user.email,
+      );
+      user.stripe_customer_id = stripeCustomer.id;
+    }
+
+    user.latitude = loginDto.latitude;
+    user.longitude = loginDto.longitude;
+    await user.save();
+    const isValidPassword = await bcrypt.compare(
+      loginDto.password,
+      user.password,
+    );
+
+    if (isValidPassword) {
+      const token = await this.jwtService.sign({
+        id: user.id,
+      });
+
+      return { token, user: user };
+    } else {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            password: 'incorrectPassword',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+  }
   async validateUsernameLogin(
     loginDto: AuthEmailLoginUsernameDto,
   ): Promise<{ token: string; user: User }> {
