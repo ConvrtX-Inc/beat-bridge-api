@@ -13,22 +13,19 @@ import { IsExist } from '../utils/validators/is-exists.validator';
 
 @Entity()
 export class QueueMember extends EntityHelper {
+  
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @IsOptional()
   @ApiProperty({ example: '9d8e6d30-7b9a-44a1-8f96-a6be1dcd6f9d' })
-  @Validate(IsExist, ['UserQueue', 'id'], {
-    message: 'User not Found',
-  })
+  @Validate(IsExist, ['UserQueue', 'id'], {message: 'User not Found',})
   @Column({ nullable: true })
   user_queue_id?: string | null;
 
   @IsOptional()
   @ApiProperty({ example: '9d8e6d30-7b9a-44a1-8f96-a6be1dcd6f9d' })
-  @Validate(IsExist, ['User', 'id'], {
-    message: 'User not Found',
-  })
+  @Validate(IsExist, ['User', 'id'], {message: 'User not Found',})
   @Column({ nullable: true })
   user_id?: string | null;
 

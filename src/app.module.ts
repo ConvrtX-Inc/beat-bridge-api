@@ -37,6 +37,7 @@ import { UserSubscriptionModule } from './user-subscription/user-subscription.mo
 import { StripeModule } from './stripe/stripe.module';
 import { ChargeModule } from './charge/charge.module';
 import { SmsModule } from './sms/sms.module';
+import { SupportModule } from './support/support.module';
 
 @Module({
   imports: [
@@ -100,6 +101,7 @@ import { SmsModule } from './sms/sms.module';
     AvatarModule,
     QueuePlaylistModule,
     UserSubscriptionModule,
+    SupportModule,
   ],
 })
 export class AppModule {}

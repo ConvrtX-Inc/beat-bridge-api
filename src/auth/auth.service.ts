@@ -6,6 +6,7 @@ import {
   AuthEmailLoginDto,
   AuthEmailLoginUsernameDto,
 } from './dtos/auth-email-login.dto';
+
 import { AuthUpdateDto } from './dtos/auth-update.dto';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import * as crypto from 'crypto';
@@ -20,6 +21,7 @@ import { UserUpdateRequest } from '../user_update_request/user_update_request.en
 import { AuthForgotPasswordDto } from './dtos/auth-forgot-password.dto';
 import { SmsService } from '../sms/sms.service';
 import { AuthResetPasswordDto } from './dtos/auth-reset-password.dto';
+import { AuthMobileDto } from './dtos/auth-mobile-login.dto';
 
 @Injectable()
 export class AuthService {
@@ -32,7 +34,52 @@ export class AuthService {
     private smsService: SmsService,
   ) {}
 
-  async validateLogin(
+  async validateMobielLogin(
+    loginDto: AuthMobileDto,
+  ): Promise<{ token: string; user: User }> {
+
+    const user = await this.usersService.findOneEntity({
+      where: {
+        phone_no: loginDto.phone_no,
+      },
+    });
+
+    if (!user.stripe_customer_id) {
+      const stripeCustomer = await this.stripeService.createCustomer(
+        user.username,
+        user.email,
+      );
+
+      user.stripe_customer_id = stripeCustomer.id;
+    }
+
+    user.latitude = loginDto.latitude;
+    user.longitude = loginDto.longitude;
+    await user.save();
+    const isValidPassword = await bcrypt.compare(
+      loginDto.password,
+      user.password,
+    );
+
+    if (isValidPassword) {
+      const token = await this.jwtService.sign({
+        id: user.id,
+      });
+
+      return { token, user: user };
+    } else {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          errors: {
+            password: 'incorrectPassword',
+          },
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+  }
+async validateLogin(
     loginDto: AuthEmailLoginDto,
   ): Promise<{ token: string; user: User }> {
     const user = await this.usersService.findOneEntity({
@@ -75,7 +122,6 @@ export class AuthService {
       );
     }
   }
-
   async validateUsernameLogin(
     loginDto: AuthEmailLoginUsernameDto,
   ): Promise<{ token: string; user: User }> {
