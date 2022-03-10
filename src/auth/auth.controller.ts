@@ -36,11 +36,13 @@ export class AuthController {
     return this.service.validateLogin(loginDto);
   }
 
+  //Login using Mobile Number
   @Post('mobile/login')
   @HttpCode(HttpStatus.OK)
   public async login_mobile(@Body() loginDto: AuthMobileDto) {
     return this.service.validateMobielLogin(loginDto);
   }
+
 
   @Post('username/login')
   @HttpCode(HttpStatus.OK)
