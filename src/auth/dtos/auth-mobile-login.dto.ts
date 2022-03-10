@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsOptional, Validate } from 'class-validator';
+import { IsNotEmpty, IsOptional, Validate,IsPhoneNumber } from 'class-validator';
 import { IsExist } from 'src/utils/validators/is-exists.validator';
 import { Transform } from 'class-transformer';
 
@@ -9,7 +9,7 @@ export class AuthMobileDto {
   @Validate(IsExist, ['User'], {
     message: 'mobileNotExist',
   })
-  mobile: string;
+  phone_no: string;
 
   @ApiProperty()
   @IsNotEmpty()

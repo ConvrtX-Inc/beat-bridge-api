@@ -6,6 +6,7 @@ import {
   AuthEmailLoginDto,
   AuthEmailLoginUsernameDto,
 } from './dtos/auth-email-login.dto';
+
 import { AuthUpdateDto } from './dtos/auth-update.dto';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import * as crypto from 'crypto';
@@ -20,6 +21,7 @@ import { UserUpdateRequest } from '../user_update_request/user_update_request.en
 import { AuthForgotPasswordDto } from './dtos/auth-forgot-password.dto';
 import { SmsService } from '../sms/sms.service';
 import { AuthResetPasswordDto } from './dtos/auth-reset-password.dto';
+import { AuthMobileDto } from './dtos/auth-mobile-login.dto';
 
 @Injectable()
 export class AuthService {
@@ -33,11 +35,12 @@ export class AuthService {
   ) {}
 
   async validateMobielLogin(
-    loginDto: AuthEmailLoginDto,
+    loginDto: AuthMobileDto,
   ): Promise<{ token: string; user: User }> {
+
     const user = await this.usersService.findOneEntity({
       where: {
-        email: loginDto.email,
+        phone_no: loginDto.phone_no,
       },
     });
 
@@ -46,6 +49,7 @@ export class AuthService {
         user.username,
         user.email,
       );
+
       user.stripe_customer_id = stripeCustomer.id;
     }
 
