@@ -7,6 +7,8 @@ import { DeepPartial } from '../utils/types/deep-partial.type';
 import { UsersService } from 'src/users/users.service';
 import { SendFriendRequestDto } from './dtos/send-friend-request.dto';
 import { User } from '../users/user.entity';
+import { AddFriendDto } from './dtos/add-friend-request.dto';
+import { resourceLimits } from 'worker_threads';
 
 @Injectable()
 export class UserConnectionService extends TypeOrmCrudService<UserConnection> {
@@ -48,6 +50,79 @@ export class UserConnectionService extends TypeOrmCrudService<UserConnection> {
     const fromUserId = user.id;
     return this.userConnectionRepository.find({
       where: { from_user_id: fromUserId },
+    });
+  }
+  /*
+   * send friend by user id
+   */
+  async addFriendRequest(user: User, dto: AddFriendDto,) {
+    
+    //Checks if sent to self
+    if(user.id === dto.id)
+    {
+        return {
+          status : HttpStatus.BAD_REQUEST,
+          response:{
+            dto:dto,
+            code:'cannotSendRequestToSelf',
+            message:'You cannot send yourself a request'
+          }
+        };
+    }
+
+    //Checks if current user has an existing connection request
+    const requested = await this.isRequested(user.id,dto.id) 
+    if(requested)
+    {
+       
+      return {
+          status : HttpStatus.BAD_REQUEST,
+          response:{
+            dto:dto,
+            code:'requestExists',
+            message:'You already sent a friend request'
+          }
+        };
+    }
+    else
+    {
+      //checks if receiver has already sent the current user a friend request
+      const pending = await this.isRequested(dto.id,user.id) 
+      if(pending)
+      {
+      
+        return {
+          status : HttpStatus.BAD_REQUEST,
+          response:{
+            dto:dto,
+            code:'requestExistsFromUser',
+            message:'Sent you a friend request'
+          }
+        };
+      }
+      else
+      {
+        const data = {
+          to_user_id: dto.id,
+          from_user_id: user.id,
+        };
+        return await this.saveOne(data);
+      }
+     
+    }
+  }
+
+  /*
+    Checks if request has already been sent
+  */
+ async isRequested(fromId:String,toId:String)
+  {
+    return await this.findOne({
+      
+      where:{
+          to_user_id:toId,
+          from_user_id:fromId
+      }
     });
   }
 
