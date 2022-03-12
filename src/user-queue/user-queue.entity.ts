@@ -7,7 +7,7 @@ import {
   UpdateDateColumn,
 } from 'typeorm';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsOptional, Validate } from 'class-validator';
+import { Allow, IsOptional, Validate } from 'class-validator';
 import { EntityHelper } from 'src/utils/entity-helper';
 import { IsExist } from '../utils/validators/is-exists.validator';
 
@@ -28,6 +28,20 @@ export class UserQueue extends EntityHelper {
   @ApiProperty({ example: 'Name' })
   @Column({ length: 100 })
   name?: string;
+
+
+
+  
+  @Allow()
+  @IsOptional()
+  @ApiProperty({ example: 'byte64image' })
+  @Column({
+    name: 'image',
+    type: 'bytea',
+    nullable: true,
+  })
+  image?: Buffer;
+
 
   user: any;
 
