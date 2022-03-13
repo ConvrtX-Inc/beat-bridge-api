@@ -22,6 +22,7 @@ import { UserConnection } from './user-connection.entity';
 import { SendFriendRequestDto } from './dtos/send-friend-request.dto';
 import { FindClosestUsersDto } from '../users/dtos/find-closest-users.dto';
 import { UsersService } from '../users/users.service';
+import { AddFriendDto } from './dtos/add-friend-request.dto';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
@@ -146,4 +147,18 @@ export class UserConnectionController
       request.user,
     );
   }
+
+  @Post('add-friend')
+  @HttpCode(HttpStatus.OK)
+  async addFriend(@Request() request,@Body() dto: AddFriendDto,) {
+    
+    return this.service.addFriendRequest( request.user, dto,);
+  
+  }
+
+
+
+
+
+
 }

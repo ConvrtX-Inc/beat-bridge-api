@@ -1,6 +1,6 @@
-import { Controller, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { UserQueueService } from './user-queue.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import {
   Crud,
@@ -11,6 +11,7 @@ import {
 } from '@nestjsx/crud';
 import { UserQueue } from './user-queue.entity';
 import { UsersService } from '../users/users.service';
+import { UpdateUserQueueImageDto } from './dto/update-user-queue-image.dto';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
@@ -94,4 +95,12 @@ export class UserQueueController implements CrudController<UserQueue> {
   async deleteOne(@Request() request) {
     return this.service.delete(request.params.id);
   }
+
+  @ApiOperation({ summary: 'Update Queue Image' })
+  @Patch('image')
+  async updateImage(@Request() req,@Body() dto: UpdateUserQueueImageDto) {
+    return this.service.updateImage(req.user.id,dto);
+  }
+
+
 }
