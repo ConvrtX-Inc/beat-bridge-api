@@ -64,6 +64,13 @@ export class UserQueueService extends TypeOrmCrudService<UserQueue> {
   async delete(id: number): Promise<void> {
     await this.destinationsRepository.delete(id);
   }
+
+  // //remove friend
+  // async removeFriend(user_id:String){
+  //   await.this.destinationsRepository.removeFriend(id);
+  // }
+
+
   // Updates ticket status
   async updateImage(userId:String,dto:UpdateUserQueueImageDto){
     
@@ -125,6 +132,10 @@ export class UserQueueService extends TypeOrmCrudService<UserQueue> {
       //   support.save();
       //   return support;
       // }
+  }
+
+  async deleteFriend(id: string): Promise<void>{
+    await this.destinationsRepository.softDelete(id);
   }
 
 }

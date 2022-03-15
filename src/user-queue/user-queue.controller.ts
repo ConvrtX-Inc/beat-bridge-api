@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { UserQueueService } from './user-queue.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -102,5 +102,9 @@ export class UserQueueController implements CrudController<UserQueue> {
     return this.service.updateImage(req.user.id,dto);
   }
 
+  @Delete('/remove-friend/:id')
+  async removeFriend(@Param('id') id: string) {
+   return this.service.deleteFriend(id);
+  }
 
 }
