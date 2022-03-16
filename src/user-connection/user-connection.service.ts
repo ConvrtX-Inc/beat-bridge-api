@@ -209,4 +209,9 @@ export class UserConnectionService extends TypeOrmCrudService<UserConnection> {
     }
     return distance;
   }
+
+  async deleteFriend(id: string): Promise<void>{
+    await this.userConnectionRepository.softDelete(id);
+  }
+
 }

@@ -64,6 +64,7 @@ export class UserQueueService extends TypeOrmCrudService<UserQueue> {
   async delete(id: number): Promise<void> {
     await this.destinationsRepository.delete(id);
   }
+
   // Updates ticket status
   async updateImage(userId:String,dto:UpdateUserQueueImageDto){
     
@@ -126,5 +127,4 @@ export class UserQueueService extends TypeOrmCrudService<UserQueue> {
       //   return support;
       // }
   }
-
 }

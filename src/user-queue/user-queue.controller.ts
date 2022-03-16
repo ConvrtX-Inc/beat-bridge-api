@@ -1,4 +1,4 @@
-import { Body, Controller, Patch, Post, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Patch, Post, Request, UseGuards } from '@nestjs/common';
 import { UserQueueService } from './user-queue.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -101,6 +101,4 @@ export class UserQueueController implements CrudController<UserQueue> {
   async updateImage(@Request() req,@Body() dto: UpdateUserQueueImageDto) {
     return this.service.updateImage(req.user.id,dto);
   }
-
-
 }
