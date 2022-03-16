@@ -65,12 +65,6 @@ export class UserQueueService extends TypeOrmCrudService<UserQueue> {
     await this.destinationsRepository.delete(id);
   }
 
-  // //remove friend
-  // async removeFriend(user_id:String){
-  //   await.this.destinationsRepository.removeFriend(id);
-  // }
-
-
   // Updates ticket status
   async updateImage(userId:String,dto:UpdateUserQueueImageDto){
     
