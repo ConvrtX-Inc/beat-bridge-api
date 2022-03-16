@@ -133,9 +133,4 @@ export class UserQueueService extends TypeOrmCrudService<UserQueue> {
       //   return support;
       // }
   }
-
-  async deleteFriend(id: string): Promise<void>{
-    await this.destinationsRepository.softDelete(id);
-  }
-
 }

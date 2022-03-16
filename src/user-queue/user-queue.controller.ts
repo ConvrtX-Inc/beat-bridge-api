@@ -101,10 +101,4 @@ export class UserQueueController implements CrudController<UserQueue> {
   async updateImage(@Request() req,@Body() dto: UpdateUserQueueImageDto) {
     return this.service.updateImage(req.user.id,dto);
   }
-
-  @Delete('/remove-friend/:id')
-  async removeFriend(@Param('id') id: string) {
-   return this.service.deleteFriend(id);
-  }
-
 }

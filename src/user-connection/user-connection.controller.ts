@@ -1,6 +1,8 @@
 import {
   Body,
   Controller,
+  Delete,
+  Param,
   Get,
   HttpCode,
   HttpStatus,
@@ -156,9 +158,8 @@ export class UserConnectionController
   
   }
 
-
-
-
-
-
+  @Delete('/remove-friend/:id')
+  async removeFriend(@Param('id') id: string) {
+   return this.service.deleteFriend(id);
+  }
 }
