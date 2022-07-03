@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, Post, Request, UseGuards } from '@nestjs/common';
 import { QueueMemberService } from './queue-member.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
@@ -11,6 +11,8 @@ import {
 } from '@nestjsx/crud';
 import { QueueMember } from './queue-member.entity';
 import { UsersService } from '../users/users.service';
+import { AddFriendDto } from 'src/user-connection/dtos/add-friend-request.dto';
+import { QueueMembersBatchDto } from './dto/queue-members-batch.dto';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
@@ -128,4 +130,20 @@ export class QueueMemberController implements CrudController<QueueMember> {
     }
     return returnResponse;
   }
+
+
+  @Post('add-all')
+  @HttpCode(HttpStatus.OK)
+  async addAll(@Request() request,@Body() dto: QueueMembersBatchDto,) {
+    
+    return this.service.addAll( request.user, dto);
+  
+  }
+  @Get('/members/:id')
+  async getFriends(@Param('id') id: string,@Request() request) {
+
+    return this.service.getAll(id);
+  }
+
+
 }

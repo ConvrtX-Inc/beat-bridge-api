@@ -25,6 +25,7 @@ import { SendFriendRequestDto } from './dtos/send-friend-request.dto';
 import { FindClosestUsersDto } from '../users/dtos/find-closest-users.dto';
 import { UsersService } from '../users/users.service';
 import { AddFriendDto } from './dtos/add-friend-request.dto';
+import { ConfirmDto } from './dtos/confirm-request.dto';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
@@ -132,6 +133,19 @@ export class UserConnectionController
     );
   }
 
+  @Post('confirm')
+  @HttpCode(HttpStatus.OK)
+  async confirm(
+    @Request() request,
+    @Body() confirmDto: ConfirmDto,
+  ) {
+    return this.service.confirm(
+      request.user,
+      confirmDto,
+    );
+  }
+
+
   @Override()
   async deleteOne(@Request() request) {
     return this.service.delete(request.params.id);
@@ -162,4 +176,12 @@ export class UserConnectionController
   async removeFriend(@Param('id') id: string) {
    return this.service.deleteFriend(id);
   }
+
+
+  @Get('/friends/:id')
+  async getFriends(@Param('id') id: string,@Request() request) {
+
+    return this.service.getFriends(request.user);
+  }
+  
 }
