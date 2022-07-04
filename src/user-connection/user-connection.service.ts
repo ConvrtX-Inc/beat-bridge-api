@@ -9,6 +9,7 @@ import { SendFriendRequestDto } from './dtos/send-friend-request.dto';
 import { User } from '../users/user.entity';
 import { AddFriendDto } from './dtos/add-friend-request.dto';
 import { resourceLimits } from 'worker_threads';
+import { ConfirmDto } from './dtos/confirm-request.dto';
 
 @Injectable()
 export class UserConnectionService extends TypeOrmCrudService<UserConnection> {
@@ -112,6 +113,50 @@ export class UserConnectionService extends TypeOrmCrudService<UserConnection> {
     }
   }
 
+
+
+async confirm(user:User,dto:ConfirmDto){
+
+  var requested:UserConnection = await this.userConnectionRepository.findOne({
+    where:{
+      to_user_id:user.id,
+      from_user_id:dto.id
+    }
+  })
+  if(requested){
+
+    
+    
+    if(requested.is_accepted)
+    {
+      return {
+        status : HttpStatus.BAD_REQUEST,
+        response:{
+          dto:dto,
+          code:'alreadyConfirmed',
+          message:'Request Already Confirmed'
+        }
+      };
+    }
+    
+    
+    requested.is_accepted = true;
+    return await requested.save();
+
+  }else{
+    return {
+      status : HttpStatus.BAD_REQUEST,
+      response:{
+        dto:dto,
+        code:'noRequst',
+        message:'Connection Request Not Found'
+      }
+    };
+  }
+
+}
+
+
   /*
     Checks if request has already been sent
   */
@@ -138,11 +183,75 @@ export class UserConnectionService extends TypeOrmCrudService<UserConnection> {
         email: sendFriendRequestDto.email,
       },
     });
-    const data = {
-      to_user_id: req.id,
-      from_user_id: user.id,
-    };
-    return await this.saveOne(data);
+    if(req)
+    {
+
+      if(req.id==user.id)
+      {
+        return {
+          response:{
+            message:"Cannot send request to yourself",
+            code:"cannotSendRequestToSelf",
+            dto:sendFriendRequestDto
+          },
+          status:HttpStatus.BAD_REQUEST
+        }
+      }
+
+      const sentRequest = await this.userConnectionRepository.findOne({
+        where:{
+          to_user_id:req.id,
+          from_user_id:user.id
+        }
+
+      });
+      if(sentRequest)
+      {
+        
+        return {
+          response:{
+            message:"Already sent a request",
+            code:"requestExists",
+            dto:sendFriendRequestDto
+          },
+          status:HttpStatus.BAD_REQUEST
+        };
+    
+      }
+
+      const receievedRequest = await this.userConnectionRepository.findOne({
+        where:{
+          from_user_id:req.id,
+          to_user_id:user.id
+        }
+
+      });
+      if(receievedRequest)
+      {
+              
+        return {
+          response:{
+            message:"Already received a request",
+            code:"requestExistsFromUser",
+            dto:sendFriendRequestDto
+          },
+          status:HttpStatus.BAD_REQUEST
+        };
+
+    
+      }
+      const data = {
+        to_user_id: req.id,
+        from_user_id: user.id,
+      };
+      return await this.saveOne(data);
+    }
+
+    return {
+      message:"User not found",
+      statusCode:HttpStatus.BAD_REQUEST
+    }
+    
   }
 
   async getClosesUsers(latitude: string, longitude: string, user: User) {
@@ -212,6 +321,37 @@ export class UserConnectionService extends TypeOrmCrudService<UserConnection> {
 
   async deleteFriend(id: string): Promise<void>{
     await this.userConnectionRepository.softDelete(id);
+  }
+
+  async getFriends(user:User){
+    console.log("Getting friends for :"+user.id);
+    const query = await this.userConnectionRepository.find({
+      where:[
+          {to_user_id:user.id,is_accepted:true},
+          {from_user_id:user.id,is_accepted:true}
+      ]
+
+    });
+
+    var friends=[];
+    
+  for(const i in query){
+
+    console.log("1Get FRIENDS:"+query[i].from_user_id);
+    console.log("2Get FRIENDS:"+query[i].to_user_id);
+    var u = await this.usersService.findOne({
+      where:{
+        id : query[i].from_user_id == user.id?query[i].to_user_id:query[i].from_user_id 
+      }
+    });    
+    friends[i] = u;
+
+  }
+    
+   return {
+    friends:friends
+   }
+
   }
 
 }
