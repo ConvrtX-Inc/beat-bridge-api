@@ -121,6 +121,56 @@ export class UserConnectionController
     return data;
   }
 
+
+
+  @Override()
+  async deleteOne(@Request() request) {
+    return this.service.delete(request.params.id);
+  }
+
+  @Post('nearest-friends')
+  @HttpCode(HttpStatus.OK)
+  public async getNearestUsers(
+    @Body() dto: FindClosestUsersDto,
+    @Request() request,
+  ) {
+    return await this.service.getClosesUsers(
+      dto.latitude,
+      dto.longitude,
+      request.user,
+    );
+  }
+
+
+  
+  @Post('closest')
+  @HttpCode(HttpStatus.OK)
+  public async getCloseUsersForRequest(
+    @Body() dto: FindClosestUsersDto,
+    @Request() request,
+  ) {
+    return await this.service.getCloseUsersForRequest(
+      dto.latitude,
+      dto.longitude,
+      request.user,
+    );
+  }
+
+
+
+  @Delete('/remove-friend/:id')
+  async removeFriend(@Param('id') id: string) {
+   return this.service.deleteFriend(id);
+  }
+
+  @Post('add-friend')
+  @HttpCode(HttpStatus.OK)
+  async addFriend(@Request() request,@Body() dto: AddFriendDto,) {
+    
+    return this.service.addFriendRequest( request.user, dto,);
+  
+  }
+
   @Post('send-friend-request')
   @HttpCode(HttpStatus.OK)
   async sendFriendRequestByEmail(
@@ -145,37 +195,6 @@ export class UserConnectionController
     );
   }
 
-
-  @Override()
-  async deleteOne(@Request() request) {
-    return this.service.delete(request.params.id);
-  }
-
-  @Post('nearest-friends')
-  @HttpCode(HttpStatus.OK)
-  public async getClosesUsers(
-    @Body() dto: FindClosestUsersDto,
-    @Request() request,
-  ) {
-    return await this.service.getClosesUsers(
-      dto.latitude,
-      dto.longitude,
-      request.user,
-    );
-  }
-
-  @Post('add-friend')
-  @HttpCode(HttpStatus.OK)
-  async addFriend(@Request() request,@Body() dto: AddFriendDto,) {
-    
-    return this.service.addFriendRequest( request.user, dto,);
-  
-  }
-
-  @Delete('/remove-friend/:id')
-  async removeFriend(@Param('id') id: string) {
-   return this.service.deleteFriend(id);
-  }
 
 
   @Get('/friends/:id')

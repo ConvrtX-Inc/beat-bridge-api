@@ -254,6 +254,8 @@ async confirm(user:User,dto:ConfirmDto){
     
   }
 
+
+
   async getClosesUsers(latitude: string, longitude: string, user: User) {
     const fromUserId = user.id;
     const query = this.userConnectionRepository.createQueryBuilder('uc');
@@ -321,6 +323,85 @@ async confirm(user:User,dto:ConfirmDto){
 
   async deleteFriend(id: string): Promise<void>{
     await this.userConnectionRepository.softDelete(id);
+  }
+
+
+
+  async getCloseUsersForRequest(latitude: string, longitude: string, user: User) {
+    const users = await  this.usersService.find();
+    const results = [];
+    for (let i = 0; i < users.length; i++) {
+  
+      if (!user && !Number.isNaN(parseFloat(users[i].latitude))) {
+        if (
+          this.closestLocation(
+            parseFloat(latitude),
+            parseFloat(longitude),
+            parseFloat(users[i].latitude),
+            parseFloat(users[i].longitude),
+            'K',
+          ) <= 1
+        ) {
+
+          var uc =  await this.userConnectionRepository.findOne({
+            where:[
+              {to_user_id:user.id},
+              {from_user_id:user.id}
+            ]
+          });
+
+          results.push({
+            user:users[i],
+            connection:uc
+          });
+        }
+      }
+    }
+    return {
+      status: HttpStatus.OK,
+      response: {
+        data: {
+          details: results,
+        },
+      },
+    };
+  }
+
+
+
+
+  async getPendingRequests(user:User){
+  console.log("Getting friends for :"+user.id);
+  const query = await this.userConnectionRepository.find({
+    where:[
+        {to_user_id:user.id,is_accepted:false},
+        {from_user_id:user.id,is_accepted:false}
+    ]
+
+  });
+
+  var friends=[];
+  
+for(const i in query){
+
+  console.log("1Get FRIENDS:"+query[i].from_user_id);
+  console.log("2Get FRIENDS:"+query[i].to_user_id);
+  var u = await this.usersService.findOne({
+    where:{
+      id : query[i].from_user_id == user.id?query[i].to_user_id:query[i].from_user_id 
+    }
+  });    
+  friends[i] = { 
+    user:u,
+    connection:query[i]
+  };
+
+}
+  
+ return {
+  friends:friends
+ }
+
   }
 
   async getFriends(user:User){
