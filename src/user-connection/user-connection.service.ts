@@ -330,9 +330,10 @@ async confirm(user:User,dto:ConfirmDto){
   async getCloseUsersForRequest(latitude: string, longitude: string, user: User) {
     const users = await  this.usersService.find();
     const results = [];
+    console.log("Found a users:"+users.length);
     for (let i = 0; i < users.length; i++) {
   
-      if (!user && !Number.isNaN(parseFloat(users[i].latitude))) {
+      if (user && !Number.isNaN(parseFloat(users[i].latitude))) {
         if (
           this.closestLocation(
             parseFloat(latitude),
@@ -343,13 +344,14 @@ async confirm(user:User,dto:ConfirmDto){
           ) <= 1
         ) {
 
+          console.log("Found a user:"+JSON.stringify(user));
           var uc =  await this.userConnectionRepository.findOne({
             where:[
               {to_user_id:user.id},
               {from_user_id:user.id}
             ]
           });
-
+          
           results.push({
             user:users[i],
             connection:uc
