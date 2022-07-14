@@ -38,6 +38,7 @@ import { StripeModule } from './stripe/stripe.module';
 import { ChargeModule } from './charge/charge.module';
 import { SmsModule } from './sms/sms.module';
 import { SupportModule } from './support/support.module';
+import { TrackModule } from './track/track.module';
 
 @Module({
   imports: [
@@ -102,6 +103,7 @@ import { SupportModule } from './support/support.module';
     QueuePlaylistModule,
     UserSubscriptionModule,
     SupportModule,
+    TrackModule,
   ],
 })
 export class AppModule {}
