@@ -202,5 +202,17 @@ export class UserConnectionController
 
     return this.service.getFriends(request.user);
   }
+
+  @Get('/friends/received/:id')
+  async getReceivedRequest(@Param('id') id: string,@Request() request) {
+
+    return this.service.getReceivedRequests(request.user);
+  }
+
+  @Get('/friends/sent/:id')
+  async getSentRequest(@Param('id') id: string,@Request() request) {
+
+    return this.service.getSentRequests(request.user);
+  }
   
 }
