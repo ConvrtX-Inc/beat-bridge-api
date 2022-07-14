@@ -9,5 +9,6 @@ import { UsersModule } from 'src/users/users.module';
   controllers: [UserQueueController],
   providers: [UserQueueService],
   imports: [UsersModule, TypeOrmModule.forFeature([UserQueue])],
+  exports:[UserQueueService]
 })
 export class UserQueueModule {}
