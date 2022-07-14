@@ -373,7 +373,6 @@ async confirm(user:User,dto:ConfirmDto){
 
 
   async getPendingRequests(user:User){
-  console.log("Getting friends for :"+user.id);
   const query = await this.userConnectionRepository.find({
     where:[
         {to_user_id:user.id,is_accepted:false},
@@ -381,6 +380,7 @@ async confirm(user:User,dto:ConfirmDto){
     ]
 
   });
+  
 
   var friends=[];
   
@@ -436,5 +436,80 @@ for(const i in query){
    }
 
   }
+
+
+
+
+
+
+
+  async getSentRequests(user:User){
+    const query = await this.userConnectionRepository.find({
+      where:[
+          {from_user_id:user.id,is_accepted:false}
+      ]
+  
+    });
+    
+  
+    var friends=[];
+    
+  for(const i in query){
+  
+    console.log("1Get FRIENDS:"+query[i].from_user_id);
+    console.log("2Get FRIENDS:"+query[i].to_user_id);
+    var u = await this.usersService.findOne({
+      where:{
+        id : query[i].from_user_id == user.id?query[i].to_user_id:query[i].from_user_id 
+      }
+    });    
+    friends[i] = { 
+      user:u,
+      connection:query[i]
+    };
+  
+  }
+    
+   return {
+    friends:friends
+   }
+  
+  }
+  
+  async getReceivedRequests(user:User){
+    const query = await this.userConnectionRepository.find({
+      where:[
+          {to_user_id:user.id,is_accepted:false}
+      ]
+  
+    });
+    
+  
+    var friends=[];
+    
+  for(const i in query){
+  
+    console.log("1Get FRIENDS:"+query[i].from_user_id);
+    console.log("2Get FRIENDS:"+query[i].to_user_id);
+    var u = await this.usersService.findOne({
+      where:{
+        id : query[i].from_user_id == user.id?query[i].to_user_id:query[i].from_user_id 
+      }
+    });    
+    friends[i] = { 
+      user:u,
+      connection:query[i]
+    };
+  
+  }
+    
+   return {
+    friends:friends
+   }
+  
+  }
+
+
+
 
 }
