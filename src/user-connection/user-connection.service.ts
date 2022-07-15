@@ -333,31 +333,36 @@ async confirm(user:User,dto:ConfirmDto){
     console.log("Found a users:"+users.length);
     for (let i = 0; i < users.length; i++) {
   
-      if (user && !Number.isNaN(parseFloat(users[i].latitude))) {
-        if (
-          this.closestLocation(
-            parseFloat(latitude),
-            parseFloat(longitude),
-            parseFloat(users[i].latitude),
-            parseFloat(users[i].longitude),
-            'K',
-          ) <= 1
-        ) {
-
-          console.log("Found a user:"+JSON.stringify(user));
-          var uc =  await this.userConnectionRepository.findOne({
-            where:[
-              {to_user_id:user.id},
-              {from_user_id:user.id}
-            ]
-          });
-          
-          results.push({
-            user:users[i],
-            connection:uc
-          });
+      if(users[i].id!=user.id){
+        if (user && !Number.isNaN(parseFloat(users[i].latitude))) {
+          if (
+            this.closestLocation(
+              parseFloat(latitude),
+              parseFloat(longitude),
+              parseFloat(users[i].latitude),
+              parseFloat(users[i].longitude),
+              'K',
+            ) <= 1
+          ) {
+  
+            console.log("Found a user:"+JSON.stringify(user));
+            var uc =  await this.userConnectionRepository.findOne({
+              where:[
+                {to_user_id:user.id,from_user_id:users[i].id},
+                {from_user_id:user.id,to_user_id:users[i].id}
+              ]
+            });
+            
+            results.push({
+              user:users[i],
+              connection:uc
+            });
+          }
         }
       }
+      
+
+
     }
     return {
       status: HttpStatus.OK,
