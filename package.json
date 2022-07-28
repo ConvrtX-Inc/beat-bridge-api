@@ -32,7 +32,6 @@
   },
   "dependencies": {
     "@aginix/nestjs-firebase-admin": "^2.2.0",
-    "@doracoder/fcm-nestjs": "^0.6.0",
     "@nestjs-modules/mailer": "1.6.0",
     "@nestjs/common": "8.0.11",
     "@nestjs/config": "1.0.2",
@@ -51,7 +50,6 @@
     "class-validator": "0.13.1",
     "cookie-parser": "^1.4.6",
     "fb": "2.0.0",
-    "firebase": "^9.9.1",
     "google-auth-library": "7.10.0",
     "handlebars": "4.7.7",
     "multer": "1.4.3",

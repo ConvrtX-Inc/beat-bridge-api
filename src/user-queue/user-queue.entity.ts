@@ -29,6 +29,10 @@ export class UserQueue extends EntityHelper {
   @Column({ length: 100 })
   name?: string;
 
+  @IsOptional()
+  @ApiProperty({ example: 'https://somewhere-in-firebase.com' })
+  @Column({ length: 200 })
+  imageUrl?: string;
 
 
   

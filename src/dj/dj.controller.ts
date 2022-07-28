@@ -1,14 +1,33 @@
-import { Controller, HttpCode, HttpStatus, Post,Request } from '@nestjs/common';
+import { Body, Controller, HttpCode, HttpStatus, Post,Request, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import * as admin from 'firebase-admin';
+import { DjDto } from './dto/dj.dto';
 
-@Controller('dj')
+@ApiTags('DJ')
+@ApiBearerAuth()
+@UseGuards(AuthGuard('jwt'))
+@Controller({
+  path: 'dj',
+  version: '1',
+})
 export class DjController {
 
         @Post()
         @HttpCode(HttpStatus.OK)
         public async test(
           @Request() request,
+          @Body() djDto:DjDto
         ) {
-          return "Test"
+
+            const message = {
+                data:{
+                  queue:djDto.queue,
+                  track:djDto.track
+                },
+              };
+              await admin.messaging().sendToTopic("test",message);
+            return "Test"
         }
     
     

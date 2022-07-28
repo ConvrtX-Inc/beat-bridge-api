@@ -39,7 +39,6 @@ import { ChargeModule } from './charge/charge.module';
 import { SmsModule } from './sms/sms.module';
 import { SupportModule } from './support/support.module';
 import { TrackModule } from './track/track.module';
-import { FcmModule } from '@doracoder/fcm-nestjs';
 import { DjModule } from './dj/dj.module';
 
 @Module({
@@ -59,9 +58,6 @@ import { DjModule } from './dj/dj.module';
       ],
       envFilePath: ['.env'],
     }),
-    // FcmModule.forRoot({
-    //   firebaseSpecsPath: path.join(__dirname, '../firebase.spec.json'),
-    // }),
     TwilioModule.forRoot({
       accountSid: process.env.TWILIO_ACCOUNT_SID,
       authToken: process.env.TWILIO_AUTH_TOKEN,
