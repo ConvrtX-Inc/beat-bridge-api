@@ -6,7 +6,6 @@ import {
   AuthEmailLoginDto,
   AuthEmailLoginUsernameDto,
 } from './dtos/auth-email-login.dto';
-
 import { AuthUpdateDto } from './dtos/auth-update.dto';
 import { randomStringGenerator } from '@nestjs/common/utils/random-string-generator.util';
 import * as crypto from 'crypto';
@@ -20,8 +19,9 @@ import { getRepository } from 'typeorm';
 import { UserUpdateRequest } from '../user_update_request/user_update_request.entity';
 import { AuthForgotPasswordDto } from './dtos/auth-forgot-password.dto';
 import { SmsService } from '../sms/sms.service';
-import { AuthResetPasswordDto } from './dtos/auth-reset-password.dto';
+import { AuthResetPasswordDto, OtpVerifyDto } from './dtos/auth-reset-password.dto';
 import { AuthMobileDto } from './dtos/auth-mobile-login.dto';
+import * as fs from 'fs'
 
 @Injectable()
 export class AuthService {
@@ -32,7 +32,7 @@ export class AuthService {
     private mailService: MailService,
     private stripeService: StripeService,
     private smsService: SmsService,
-  ) {}
+  ) { }
 
   async validateMobielLogin(
     loginDto: AuthMobileDto,
@@ -79,9 +79,17 @@ export class AuthService {
       );
     }
   }
-async validateLogin(
+  async validateLogin(
     loginDto: AuthEmailLoginDto,
-  ): Promise<{ token: string; user: User }> {
+  ) {
+    if (loginDto.latitude == null || loginDto.longitude == null) {
+      return {
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        errors: {
+          latitude: "Please Turn On Your Device Location",
+        }
+      }
+    }
     const user = await this.usersService.findOneEntity({
       where: {
         email: loginDto.email,
@@ -229,7 +237,8 @@ async validateLogin(
     };
   }
 
-  async register(dto: AuthRegisterLoginDto): Promise<void> {
+  async register(dto: AuthRegisterLoginDto): Promise<any> {
+
     const hash = crypto
       .createHash('sha256')
       .update(randomStringGenerator())
@@ -239,14 +248,41 @@ async validateLogin(
       dto.username,
       dto.email,
     );
-    await this.usersService.saveEntity({
+    var imagePath = null
+    // Encoding Base64 to Buffer 
+    if (dto.image) {
+      let base64 = dto.image;
+      const buffer = Buffer.from(base64, "base64");
+      const randomString = randomStringGenerator();
+      fs.writeFileSync(`files/users/${randomString}.jpeg`, buffer);
+      imagePath = `/users/${randomString}.jpeg`;
+    }
+
+    const newUser = await this.usersService.saveEntity({
       ...dto,
       email: dto.email,
-      phone_no: dto.phone_number,
+      phone_no: dto.phone_no,
       username: dto.username,
       stripe_customer_id: stripeCustomer.id,
+      image: imagePath,
+      latitude: '0',
+      longitude: '0',
       hash,
     });
+
+    if (newUser) {
+      // const data = {
+      //   to: newUser.email,
+      //   name: newUser.username
+      // }
+      // const mail = await this.mailService.reisterMail(data);
+      // console.log(mail);
+      var token = await this.jwtService.sign({
+        id: newUser.id,
+      });
+    }
+    return { token, user: newUser };
+
   }
 
   async confirmEmail(hash: string): Promise<void> {
@@ -328,13 +364,14 @@ async validateLogin(
         });
       }
       if (dto.email) {
-        return await this.mailService.forgotPassword({
+        await this.mailService.forgotPassword({
           to: dto.email,
           name: user.username,
           data: {
             hash,
           },
         });
+        return { message: "Email Sent" }
       } else {
         return await this.smsService.send({
           phone_number: user.phone_no.toString(),
@@ -370,9 +407,7 @@ async validateLogin(
         throw new HttpException(
           {
             status: HttpStatus.UNPROCESSABLE_ENTITY,
-            errors: {
-              hash: `notFound`,
-            },
+            hash: `Not Valid`,
           },
           HttpStatus.UNPROCESSABLE_ENTITY,
         );
@@ -384,24 +419,37 @@ async validateLogin(
       await this.forgotService.softDelete(forgot.id);
       return {
         status: HttpStatus.OK,
-        sent_data: dto,
-        response: {
-          data: {
-            details: 'Successfully updated',
-          },
-        },
+        message: 'Successfully updated',
       };
     } catch (error) {
       return {
-        status: HttpStatus.BAD_REQUEST,
-        sent_data: dto,
-        response: {
-          data: {
-            details: 'Something went wrong: ' + error.message,
-          },
-        },
+        status: HttpStatus.UNPROCESSABLE_ENTITY,
+        mesage: 'Not Valid: ',
       };
     }
+  }
+
+  async otpVerify(dto: OtpVerifyDto) {
+    const forgot = await this.forgotService.findOneEntity({
+      where: {
+        hash: dto.hash,
+      },
+    });
+    if (!forgot) {
+      throw new HttpException(
+        {
+          status: HttpStatus.UNPROCESSABLE_ENTITY,
+          hash: `Not Valid`,
+        },
+        HttpStatus.UNPROCESSABLE_ENTITY,
+      );
+    }
+
+    return {
+      status: HttpStatus.OK,
+      message: "OTP Verified"
+    }
+
   }
 
   async me(user: User): Promise<User> {
@@ -469,13 +517,13 @@ async validateLogin(
   async resetAdminPassword(dto) {
     const user = await this.usersService.findOneEntity({
       where: {
-        email: 'admin@convrtx.com',
+        email: 'mailtrap@beatbridge.app',
       },
     });
     if (!user) {
       return await this.usersService.saveEntity({
         username: 'admin',
-        email: 'admin@convrtx.com',
+        email: 'mailtrap@beatbridge.app',
         password: dto.password ?? 'qwerty123',
       });
     } else {
@@ -488,13 +536,13 @@ async validateLogin(
   async generateAdmin() {
     const user = await this.usersService.findOneEntity({
       where: {
-        email: 'admin@convrtx.com',
+        email: 'mailtrap@beatbridge.app',
       },
     });
     if (!user) {
       return await this.usersService.saveEntity({
         username: 'admin',
-        email: 'admin@convrtx.com',
+        email: 'mailtrap@beatbridge.app',
         password: 'qwerty123',
       });
     }

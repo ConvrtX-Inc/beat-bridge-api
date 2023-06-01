@@ -16,3 +16,10 @@ export class AuthResetPasswordAdminDto {
   @IsOptional()
   password: string;
 }
+
+export class OtpVerifyDto {
+
+  @ApiProperty({ example: "2323" })
+  @IsNotEmpty()
+  hash: string;
+}

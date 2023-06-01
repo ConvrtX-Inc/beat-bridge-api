@@ -44,7 +44,7 @@ export class QueueMemberController implements CrudController<QueueMember> {
   constructor(
     public service: QueueMemberService,
     public userService: UsersService,
-  ) {}
+  ) { }
 
   get base(): CrudController<QueueMember> {
     return this;
@@ -53,6 +53,21 @@ export class QueueMemberController implements CrudController<QueueMember> {
   @Override()
   async deleteOne(@Request() request) {
     return this.service.delete(request.params.id);
+  }
+
+  @Override('updateOneBase')
+  async updateMember(@Param() Param, @Body() member) {
+    return await this.service.updateMember(Param.id, member);
+  }
+
+  @Override('createOneBase')
+  async createOne(@Body() Body) {
+    return this.service.createOneMember(Body);
+  }
+
+  @Get('remove/:queue_id')
+  async removeMember(@Param('queue_id') queue_id, @Request() req) {
+   return this.service.removeMember(queue_id , req.user)
   }
 
   @ApiOperation({ summary: 'Retrieve members list by queue id' })
@@ -134,13 +149,13 @@ export class QueueMemberController implements CrudController<QueueMember> {
 
   @Post('add-all')
   @HttpCode(HttpStatus.OK)
-  async addAll(@Request() request,@Body() dto: QueueMembersBatchDto,) {
-    
-    return this.service.addAll( request.user, dto);
-  
+  async addAll(@Request() request, @Body() dto: QueueMembersBatchDto,) {
+
+    return this.service.addAll(request.user, dto);
+
   }
   @Get('/members/:id')
-  async getFriends(@Param('id') id: string,@Request() request) {
+  async getFriends(@Param('id') id: string, @Request() request) {
 
     return this.service.getAll(id);
   }

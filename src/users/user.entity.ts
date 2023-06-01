@@ -16,6 +16,7 @@ import {
   IsOptional,
   MinLength,
   Validate,
+  Allow
 } from 'class-validator';
 import { IsNotExist } from '../utils/validators/is-not-exists.validator';
 import * as bcrypt from 'bcryptjs';
@@ -110,6 +111,16 @@ export class User extends EntityHelper {
   @ApiProperty({ example: '' })
   @Column({ type: 'text', nullable: true })
   longitude?: string;
+
+  @Allow()
+  @IsOptional()
+  @ApiProperty({ example: 'byte64image' })
+  @Column({
+    name: 'image',    
+    nullable: true
+  })
+  image?: string;
+
 
   @IsOptional()
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })

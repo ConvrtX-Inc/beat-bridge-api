@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, UnprocessableEntityException } from '@nestjs/common';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { PassportModule } from '@nestjs/passport';
@@ -29,7 +29,7 @@ import { SmsModule } from 'src/sms/sms.module';
           expiresIn: configService.get('auth.expires'),
         },
       }),
-    }),
+    }),   
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtStrategy, AnonymousStrategy],

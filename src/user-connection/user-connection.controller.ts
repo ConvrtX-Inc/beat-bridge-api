@@ -24,7 +24,7 @@ import { UserConnection } from './user-connection.entity';
 import { SendFriendRequestDto } from './dtos/send-friend-request.dto';
 import { FindClosestUsersDto } from '../users/dtos/find-closest-users.dto';
 import { UsersService } from '../users/users.service';
-import { AddFriendDto } from './dtos/add-friend-request.dto';
+import { AddFriendDto, CheckFriendDto } from './dtos/add-friend-request.dto';
 import { ConfirmDto } from './dtos/confirm-request.dto';
 
 @ApiBearerAuth()
@@ -70,6 +70,7 @@ export class UserConnectionController
     const returnResponse = [];
     req.parsed.sort = [{ field: 'created_date', order: 'DESC' }];
     const users = await this.service.getMany(req);
+    console.log(users);
     const tempToUser = [];
     const tempFromUser = [];
     let to_user = {};
@@ -160,7 +161,7 @@ export class UserConnectionController
 
   @Delete('/remove-friend/:id')
   async removeFriend(@Param('id') id: string) {
-   return this.service.deleteFriend(id);
+   return this.service.deleteMyFriend(id);
   }
 
   @Post('add-friend')
@@ -196,16 +197,44 @@ export class UserConnectionController
   }
 
 
-
   @Get('/friends/:id')
   async getFriends(@Param('id') id: string,@Request() request) {
+    const returnResponse = [];   
+    const users = await this.service.getFriends(request.user);   
+    const tempToUser = [];
+    const tempFromUser = [];
+    let to_user = {};
+    let from_user = {};
+    if (users instanceof Array) {
+      for (const i in users) {
+        let data = {
+          to_user: undefined,
+          from_user: undefined,
+        };
+        data = users[i];
 
-    return this.service.getFriends(request.user);
+        if (!tempToUser.includes(users[i].to_user_id)) {
+          tempToUser.push(users[i].to_user_id);
+          to_user = await this.userService.findOne({
+            id: users[i].to_user_id,
+          });
+        }
+        if (!tempFromUser.includes(users[i].from_user_id)) {
+          tempFromUser.push(users[i].from_user_id);
+          from_user = await this.userService.findOne({
+            id: users[i].from_user_id,
+          });
+        }
+        data.to_user = to_user;
+        data.from_user = from_user;
+        returnResponse.push(data);
+      }
+      return returnResponse;
+    }    
   }
 
   @Get('/friends/received/:id')
   async getReceivedRequest(@Param('id') id: string,@Request() request) {
-
     return this.service.getReceivedRequests(request.user);
   }
 
@@ -213,6 +242,12 @@ export class UserConnectionController
   async getSentRequest(@Param('id') id: string,@Request() request) {
 
     return this.service.getSentRequests(request.user);
+  }
+
+  @Post('friend/check')
+  @HttpCode(HttpStatus.OK)
+  async checkFriend(@Request() req , @Body() dto:CheckFriendDto){
+    return this.service.checkFriend(req.user.id , dto );
   }
   
 }

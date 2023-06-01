@@ -47,7 +47,7 @@ export class MailService {
       to: mailData.to,
       from: {
         name: this.configService.get('app.name'),
-        address: 'bernie@convrtx.com',
+        address: 'mailtrap@beatbridge.app',
       },
       subject: await this.i18n.t('common.resetPassword'),
       text: `${this.configService.get('app.frontendDomain')}/password-change/${
@@ -76,7 +76,8 @@ export class MailService {
       to: mailData.to,
       from: {
         name: this.configService.get('app.name'),
-        address: 'bernie@convrtx.com',
+        // Domain Changed
+        address: 'mailtrap@beatbridge.app',
       },
       subject: 'Update profile confirmation',
       text: `${this.configService.get(
@@ -94,6 +95,36 @@ export class MailService {
         text1: 'Hi, ',
         text2: 'We received a request to update your information on',
         text3: 'Click to confirm update',
+      },
+    });
+  }
+
+  async reisterMail(mailData) {
+    await this.mailerService.sendMail({
+      to: mailData.to,
+      subject:
+        (await this.i18n.t('common.welcome_to')) +
+        ' ' +
+        this.configService.get('app.name') +
+        ' ' +
+        mailData.name +
+        '! ' +
+        (await this.i18n.t('common.confirm_your_email')),
+      text: `${this.configService.get('app.frontendDomain')}/confirm-email/${
+        mailData.to
+      } ${await this.i18n.t('common.confirmEmail')}`,
+      template: './activation',
+      context: {
+        title: await this.i18n.t('common.confirmEmail'),
+        url: `${this.configService.get('app.frontendDomain')}/confirm-email/${
+          mailData.to
+        }`,
+        actionTitle: await this.i18n.t('common.confirmEmail'),
+        app_name: this.configService.get('app.name'),
+        client_name: mailData.name,
+        text1: await this.i18n.t('confirm-email.text1'),
+        text2: await this.i18n.t('confirm-email.text2'),
+        text3: await this.i18n.t('confirm-email.text3'),
       },
     });
   }

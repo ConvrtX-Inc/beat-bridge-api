@@ -37,6 +37,11 @@ export class UserConnection extends EntityHelper {
   to_user_id?: string | null;
 
   @IsOptional()
+  @ApiProperty({ example: '9d8e6d30-7b9a-44a1-8f96-a6be1dcd6f9d' }) 
+  @Column({ nullable: true })
+  parent_id?: string | null;
+
+  @IsOptional()
   @ApiProperty({ example: true })
   @Column({ type: 'boolean', nullable: true, default: 'FALSE' })
   is_accepted: boolean | null;

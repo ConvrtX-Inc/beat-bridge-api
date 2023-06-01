@@ -29,20 +29,30 @@ export class UserQueue extends EntityHelper {
   @Column({ length: 100 })
   name?: string;
 
+  @IsOptional()
+  @ApiProperty({ example: 'spotify' })
+  @Column({ length: 50,nullable: true  })
+  platform?: string;
 
+  @IsOptional()
+  @ApiProperty({ example: 'Johnn' })
+  @Column({ length: 50,nullable: true  })
+  created_by?: string;
 
-  
+  @IsOptional()
+  @Column('jsonb',{nullable: true })
+  queueData?: object[];
+
   @Allow()
   @IsOptional()
   @ApiProperty({ example: 'byte64image' })
   @Column({
-    name: 'image',
-    type: 'bytea',
+    name: 'image',   
     nullable: true,
   })
-  image?: Buffer;
+  image?: string;
 
-
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   user: any;
 
   @CreateDateColumn()

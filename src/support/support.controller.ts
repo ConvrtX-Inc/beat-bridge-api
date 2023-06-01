@@ -1,19 +1,14 @@
-import { Body, Controller, Get, HttpStatus, Param, Post,Patch, Req, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpStatus, Param, Post,Patch, Req, Request, UseGuards, Query } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import {
   Crud,
   CrudController,
-  CrudRequest,
   Override,
-  ParsedBody,
-  ParsedRequest,
 } from '@nestjsx/crud';
 import {SysSupport} from './support.entity';
 import {SysSupportService} from './support.service';
-import { request } from 'express';
-import { UpdateStatusDto } from './dto/status-update.dto';
-
+import { CreateSupportDto } from './dto/create-support.dto';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
@@ -23,7 +18,10 @@ import { UpdateStatusDto } from './dto/status-update.dto';
     type: SysSupport,
   },
   routes: {
-    exclude: ['replaceOneBase', 'createManyBase'],
+    exclude: ['replaceOneBase', 'createManyBase','deleteOneBase','updateOneBase'],
+  },
+  dto : {
+    create : CreateSupportDto
   },
   query: {
     maxLimit: 50,
@@ -51,17 +49,23 @@ export class SysSupportController implements CrudController<SysSupport> {
 
   //Get SysSupport for a user
   @ApiOperation({ summary: 'Retrieve members list by user id' })
-  @Get('/:userId')
-  async getMembersByQueueId(@Param('userId') userId: string) {
+  @Get('/:user_id')
+  async getMembersByQueueId(@Param('user_id') user_id: string) {
     const supportTickets = await this.service.findManyEntities({
-      where: { user_id: userId }
+      where: { user_id: user_id }
     });
     return supportTickets;
+  }  
+
+  @Override('getManyBase')
+  async getManySupport(@Query() query){
+    console.log(query.limit);
+    return await this.service.getManySupport(query.limit);
   }
 
-  @ApiOperation({ summary: 'Update ticket status' })
-  @Post('status')
-  async updateStatus(@Request() req:CrudRequest,@Body() dto: UpdateStatusDto) {
-    return this.service.updateStatus(req,dto);
+  @Get('completed/:id')
+  async changeStatusToCompleted(@Param('id') id){
+    return await this.service.changeStatusToCompleted(id);
+
   }
 }

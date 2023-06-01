@@ -15,12 +15,12 @@ export class AuthEmailLoginDto {
   @IsNotEmpty()
   password: string;
 
-  @IsNotEmpty()
   @ApiProperty({ example: '1.28210155945393' })
+  @IsOptional()
   latitude?: string;
 
-  @IsNotEmpty()
   @ApiProperty({ example: '103.81722480263163' })
+  @IsOptional()
   longitude?: string;
 }
 
@@ -36,11 +36,11 @@ export class AuthEmailLoginUsernameDto {
   @IsNotEmpty()
   password: string;
 
-  @IsNotEmpty()
   @ApiProperty({ example: '1.28210155945393' })
+  @IsOptional()
   latitude?: string;
 
-  @IsNotEmpty()
   @ApiProperty({ example: '103.81722480263163' })
+  @IsOptional()
   longitude?: string;
 }

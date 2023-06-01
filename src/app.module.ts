@@ -39,9 +39,16 @@ import { ChargeModule } from './charge/charge.module';
 import { SmsModule } from './sms/sms.module';
 import { SupportModule } from './support/support.module';
 import { TrackModule } from './track/track.module';
+import { TrackHistoryModule } from './track-history/track-history.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
+import { GuidlinesModule } from './guidlines/guidlines.module';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'files'),
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -102,8 +109,10 @@ import { TrackModule } from './track/track.module';
     AvatarModule,
     QueuePlaylistModule,
     UserSubscriptionModule,
-    SupportModule,
+    SupportModule,   
     TrackModule,
+    TrackHistoryModule,
+    GuidlinesModule
   ],
 })
 export class AppModule {}

@@ -34,7 +34,7 @@ export class QueueMember extends EntityHelper {
   user_queue: any;
 
   @ApiProperty({ example: true })
-  @Column({ type: 'boolean', nullable: true, default: 'TRUE' })
+  @Column({ type: 'boolean', nullable: true, default: 'FALSE' })
   is_admin: boolean | null;
 
   @CreateDateColumn()

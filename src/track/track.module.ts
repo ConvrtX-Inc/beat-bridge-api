@@ -7,9 +7,9 @@ import { Track } from './track.entity';
 import { UserQueueService } from 'src/user-queue/user-queue.service';
 
 @Module({
-  imports:[UserQueueModule,TypeOrmModule.forFeature([Track])],
+  imports: [UserQueueModule, TypeOrmModule.forFeature([Track])],
   providers: [TrackService],
   controllers: [TrackController],
-  exports:[TrackService]
+  exports: [TrackService],
 })
 export class TrackModule {}

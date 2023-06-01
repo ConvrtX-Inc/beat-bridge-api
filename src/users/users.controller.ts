@@ -1,11 +1,14 @@
 import {
   Body,
-  Controller, Get,
+  Controller,
+  Get,
   HttpCode,
-  HttpStatus, Param,
+  HttpStatus,
+  Param,
   Post,
   Request,
   UseGuards,
+  Query
 } from '@nestjs/common';
 import { Crud, CrudController, Override } from '@nestjsx/crud';
 import { User } from './user.entity';
@@ -14,7 +17,8 @@ import { AuthGuard } from '@nestjs/passport';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import validationOptions from 'src/utils/validation-options';
 import { FindClosestUsersDto } from './dtos/find-closest-users.dto';
-import {UpdateUserDto} from "./dtos/update-user.dto";
+import { UpdateUserDto } from './dtos/update-user.dto';
+import { query } from 'express';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
@@ -59,6 +63,24 @@ export class UsersController implements CrudController<User> {
 
   get base(): CrudController<User> {
     return this;
+  }
+
+  @Get('count')
+  @HttpCode(HttpStatus.OK)
+  getUsersCount() {
+    return this.service.findTotalCount();
+  }
+
+
+  @Post('callback')
+  @HttpCode(HttpStatus.OK)
+  callback(@Body() callbackData){
+    return callbackData;
+  }
+
+  @Override('getManyBase')
+  async getAllUsers(@Request() request, @Query() query){
+    return this.service.getAll(query.limit,request.user);
   }
 
   @Override('getOneBase')

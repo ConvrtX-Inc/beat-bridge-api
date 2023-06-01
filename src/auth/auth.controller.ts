@@ -18,6 +18,7 @@ import { AuthConfirmEmailDto } from './dtos/auth-confirm-email.dto';
 import {
   AuthResetPasswordAdminDto,
   AuthResetPasswordDto,
+  OtpVerifyDto
 } from './dtos/auth-reset-password.dto';
 import { AuthRegisterLoginDto } from './dtos/auth-register-login.dto';
 import { AuthMobileDto } from './dtos/auth-mobile-login.dto';
@@ -28,7 +29,7 @@ import { AuthMobileDto } from './dtos/auth-mobile-login.dto';
   version: '1',
 })
 export class AuthController {
-  constructor(public service: AuthService) {}
+  constructor(public service: AuthService) { }
 
   @Post('email/login')
   @HttpCode(HttpStatus.OK)
@@ -74,6 +75,12 @@ export class AuthController {
     return this.service.resetPassword(resetPasswordDto);
   }
 
+  @Post('otp/verify')
+  @HttpCode(HttpStatus.OK)
+  async otpVerify(@Body() dto: OtpVerifyDto) {
+    return this.service.otpVerify(dto);
+  }
+
   @Get('generate-admin')
   @ApiOperation({ summary: 'Generates default admin' })
   @HttpCode(HttpStatus.OK)
@@ -93,3 +100,4 @@ export class AuthController {
     return this.service.confirmChanges(hash);
   }
 }
+

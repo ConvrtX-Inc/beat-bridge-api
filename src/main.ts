@@ -5,7 +5,7 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { SerializerInterceptor } from './utils/serializer.interceptor';
 import validationOptions from './utils/validation-options';
-import {json,urlencoded} from 'body-parser';
+import { json, urlencoded } from 'body-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: true });
@@ -19,15 +19,19 @@ async function bootstrap() {
     type: VersioningType.URI,
   });
 
-  app.use(json({
-    limit: '50mb'
-  }));
-  
-  app.use(urlencoded({
-    limit: '50mb',
-    parameterLimit: 100000,
-    extended: true 
-  }));
+  app.use(
+    json({
+      limit: '50mb',
+    }),
+  );
+
+  app.use(
+    urlencoded({
+      limit: '50mb',
+      parameterLimit: 100000,
+      extended: true,
+    }),
+  );
 
   app.useGlobalInterceptors(new SerializerInterceptor());
   app.useGlobalPipes(new ValidationPipe(validationOptions));
@@ -46,4 +50,3 @@ async function bootstrap() {
   await app.listen(process.env.PORT || 8000);
 }
 void bootstrap();
-  

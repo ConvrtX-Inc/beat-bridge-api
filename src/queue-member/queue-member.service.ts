@@ -8,6 +8,8 @@ import { DeepPartial } from '../utils/types/deep-partial.type';
 import { QueueMembersBatchDto } from './dto/queue-members-batch.dto';
 import { UsersService } from 'src/users/users.service';
 import { User } from 'aws-sdk/clients/appstream';
+import { identity } from 'rxjs';
+import { throws } from 'assert';
 
 @Injectable()
 export class QueueMemberService extends TypeOrmCrudService<QueueMember> {
@@ -16,6 +18,25 @@ export class QueueMemberService extends TypeOrmCrudService<QueueMember> {
     private destinationsRepository: Repository<QueueMember>,
     private usersService: UsersService  ) {
     super(destinationsRepository);
+  }
+
+  /*
+   * Create One entity
+   */
+  async createOneMember(data:any){
+    const newMember = this.destinationsRepository.save(data);
+    return newMember;
+  }
+  /*
+   * Update One entity
+   */
+  async updateMember(id,memberData){
+    const member = await this.destinationsRepository.findOne({
+      id:id
+    })
+    member.is_admin = memberData.is_admin;
+    await member.save()
+    return member;
   }
 
   /*
@@ -62,13 +83,33 @@ export class QueueMemberService extends TypeOrmCrudService<QueueMember> {
   /*
    * Hardelete single entity
    */
-  async delete(id: number): Promise<void> {
+  async delete(id: string): Promise<void> {
     await this.destinationsRepository.delete(id);
   }
 
-  async getAll(queueId:String){
+  async removeMember(queue_id , user){
+    const member = await this.destinationsRepository.findOne({
+      where : {
+        user_id : user.id,
+        user_queue_id : queue_id
+      }
+    });   
+    if(!member){
+      return{
+        message : "No Member Found",
+        status : HttpStatus.BAD_GATEWAY        
+      }
+    }
+    await this.delete(member.id)
+    return { message : "Member Deleted Successfully"}
+   
+  }
 
-    var queueMembers = await this.destinationsRepository.find({where:{user_queue_id:queueId}})
+  async getAll(queueId:any){
+
+    var queueMembers = await this.destinationsRepository.find({
+      user_queue_id:queueId
+    })
 
     return queueMembers;
   }
